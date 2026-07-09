@@ -10,7 +10,7 @@
     <!-- Identity & Actions Header -->
     <div class="bg-surface-container-lowest border border-outline-variant p-8 mb-8 flex flex-col md:flex-row gap-8 items-start rounded-xl shadow-sm">
         <div class="w-full md:w-1/3 aspect-video rounded overflow-hidden border border-outline-variant relative group">
-            <img class="w-full h-full object-cover" alt="CNC Milling Center CNC-08" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjzHQZ_62OFRnjtdGRUXpyjZk7a5eLoAsOqCO-r1y8gcUsnQOwPwJI9o8qDPo0frZnFrhaO3reWc4nyJmPsAb5_7Kirw-p32jXPQJNIxJFOq7v2ptJEz_KieMb3sJ_ceBjhluewlJNwv_TrYI1wqQ1s2uCnDywa0o57yxn9VN50N15_u5E1Tl5RXKRozb2-kQU8eu58sQ2aiII_BKreRQhtfrliIRlSLlIEGZHgMwj_4pNj8qVj7cmsc5xV4pcIt2Ltzt_4SvwPWg"/>
+            <img class="w-full h-full object-cover" alt="CNC Milling Center CNC-08" src="{{ asset('images/cnc-08.webp') }}"/>
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
         
@@ -32,7 +32,7 @@
                     <x-status-badge type="critical" label="Critical Status" />
                     
                     <div class="p-2 bg-white border border-outline-variant rounded shadow-sm">
-                        <img class="w-16 h-16" alt="QR Code" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpDz2q4WKO2zgYs8pO0qKF85UNbyLMq_MzfDCpG8tP2GE2oPz5ujfa8v7wLuJkextoAcjZeaoZyeBm0z2sYFYCg6oev4YBUuAjY12GhIEYUe3h8gx8ZfBSCruMSLquV2EKNY89GqMnJHAHNDwabqFououU6D_pdb6JAughory5kxqPEbKBfb7E85kjSduul83YJgw03sjh-aN0w0H2EQg16MoPstJS5zRChIvCnU07aK-VCkEc_0v9LVBvg5_oSTmFhd8twhaxp8s"/>
+                        <img class="w-16 h-16" alt="QR Code" src="{{ asset('images/qr-cnc-08.png') }}"/>
                     </div>
                 </div>
             </div>

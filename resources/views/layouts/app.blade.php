@@ -6,11 +6,11 @@
     <title>{{ $title ?? 'MRM System' }}</title>
     
     <!-- Tailwind CSS with Plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="{{ asset('js/tailwind.js') }}"></script>
     
     <!-- Google Fonts & Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Geist:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="{{ asset('css/material-symbols-outlined.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/geist-jetbrains.css') }}" rel="stylesheet"/>
     
     <!-- Tailwind Configuration from Design Spec -->
     <script id="tailwind-config">

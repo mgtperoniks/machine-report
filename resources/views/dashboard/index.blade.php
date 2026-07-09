@@ -219,7 +219,7 @@
         </div>
         <div class="flex justify-center md:justify-end">
             <div class="bg-white p-4 rounded-xl shadow-lg border-4 border-primary text-center">
-                <img class="w-32 h-32 mx-auto" alt="A clean, minimalist high-contrast QR code centered on a white background with thin industrial blue border." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiAE0EI69dZGZjQ8WY5iLmcb6j-00hHwAMRI_A9FCeGb5xNUV6CU8tHdFSdj48-Vet7g-0EEYcTB0nJsRpuxNpG1wjfh8vYRc_Y7tMOS4b4oFuXbpGs_70Y7TQHFJHKXSIKMve4RBX7Q6nYzFLb2PqENgs1LM7Vz7CJkQm9bIwaCwfDUlbJVCP9mzdgqoUsm4PMUQGTYCeHlOXQiDGgLY56kR1uT7olKvLyj1xf6e18Tzyilgu_Ch5sas7mLmhAAvecMdzf1eCSdI"/>
+                <img class="w-32 h-32 mx-auto" alt="A clean, minimalist high-contrast QR code centered on a white background with thin industrial blue border." src="{{ asset('images/qr-system-main-hub.png') }}"/>
                 <p class="text-primary-fixed mt-2 mono font-bold text-label-sm">ID: SYSTEM-MAIN-HUB</p>
             </div>
         </div>
