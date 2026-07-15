@@ -27,15 +27,15 @@
 <x-layouts.app 
     title="Daftar Mesin | Sistem MRM"
     topbar-title="Daftar Mesin"
-    :subnav="['Semua Mesin' => route('machines.index'), 'Kerusakan Aktif' => '#', 'Didekomisioning' => '#']"
-    active-subnav="Semua Mesin"
+    :subnav="['Aktif' => route('machines.index', ['status_filter' => 'ACTIVE']), 'Nonaktif' => route('machines.index', ['status_filter' => 'INACTIVE']), 'Pensiun' => route('machines.index', ['status_filter' => 'RETIRED']), 'Semua' => route('machines.index', ['status_filter' => 'ALL'])]"
+    active-subnav="{{ $statusFilter === 'ACTIVE' ? 'Aktif' : ($statusFilter === 'INACTIVE' ? 'Nonaktif' : ($statusFilter === 'RETIRED' ? 'Pensiun' : 'Semua')) }}"
 >
     <!-- Breadcrumbs -->
     <x-breadcrumb :items="['Daftar Mesin' => route('machines.index')]" />
 
     <x-page-header title="Daftar Mesin" subtitle="Total: {{ $machines->count() }} Unit Peralatan Terdaftar" class="mb-6">
         <x-slot name="right">
-            <x-button variant="primary" icon="add" href="{{ route('maintenances.create') }}">
+            <x-button variant="primary" icon="add" href="{{ route('machines.create') }}">
                 Tambah Mesin Baru
             </x-button>
         </x-slot>
@@ -51,6 +51,7 @@
                     <!-- Keep current sort parameter -->
                     <input type="hidden" name="sort_by" value="{{ $sortBy }}"/>
                     <input type="hidden" name="sort_order" value="{{ $sortOrder }}"/>
+                    <input type="hidden" name="status_filter" value="{{ $statusFilter }}"/>
 
                     <!-- Search bar -->
                     <div class="md:col-span-3">
@@ -177,12 +178,13 @@
                             </th>
                             <th class="px-6 py-3 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Status PM</th>
                             <th class="px-6 py-3 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Sparepart</th>
+                            <th class="px-6 py-3 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Siklus</th>
                             <th class="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-outline-variant">
                         @forelse($machines as $machine)
-                            <tr class="hover:bg-surface-container-low transition-colors">
+                            <tr class="hover:bg-surface-container-low transition-colors @if(!$machine->is_active || $machine->lifecycle_status !== 'ACTIVE') opacity-60 bg-surface-container-low italic text-on-surface-variant @endif">
                                 <!-- Machine Photo -->
                                 <td class="px-6 py-4">
                                     @php
@@ -275,6 +277,11 @@
                                     <span class="inline-flex items-center text-xs font-semibold py-0.5 px-2 rounded {{ $readinessColor }}">
                                         {{ $readinessLabel }}
                                     </span>
+                                </td>
+
+                                <!-- Lifecycle status badge -->
+                                <td class="px-6 py-4">
+                                    <x-status-badge type="{{ $machine->lifecycle_status === 'ACTIVE' ? 'success' : ($machine->lifecycle_status === 'INACTIVE' ? 'warning' : 'low') }}" label="{{ $machine->lifecycle_status === 'ACTIVE' ? 'Aktif' : ($machine->lifecycle_status === 'INACTIVE' ? 'Nonaktif' : 'Pensiun') }}" />
                                 </td>
 
                                 <!-- Passport Button -->

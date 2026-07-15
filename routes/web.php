@@ -4,30 +4,22 @@ use Illuminate\Support\Facades\Route;
 
 use App\Models\Machine;
 
-// Executive Dashboard
-Route::get('/', function () {
-    $totalMachines = Machine::count();
-    $healthyMachines = Machine::all()->filter(fn($m) => $m->health_score >= 85)->count();
-    $breakdowns = Machine::where('operational_status', 'breakdown')->count();
-    $maintenanceDue = Machine::where('operational_status', 'maintenance')->count();
-    
-    // Sort all machines by health score (ascending) to show the sickest machines
-    $sickestMachines = Machine::all()->sortBy('health_score')->take(5);
+use App\Http\Controllers\DashboardController;
 
-    return view('dashboard.index', compact(
-        'totalMachines',
-        'healthyMachines',
-        'breakdowns',
-        'maintenanceDue',
-        'sickestMachines'
-    ));
-})->name('dashboard');
+// Morning Briefing Dashboard
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
 
 use App\Http\Controllers\MachineController;
 
 // Machine Registry
 Route::get('/machines', [MachineController::class, 'index'])->name('machines.index');
+Route::get('/machines/create', [MachineController::class, 'create'])->name('machines.create');
+Route::post('/machines', [MachineController::class, 'store'])->name('machines.store');
 Route::get('/machines/{machine}', [MachineController::class, 'show'])->name('machines.show');
+Route::get('/machines/{machine}/edit', [MachineController::class, 'edit'])->name('machines.edit');
+Route::put('/machines/{machine}', [MachineController::class, 'update'])->name('machines.update');
+Route::delete('/machines/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy');
 
 // Maintenance Management
 Route::get('/maintenances', function () {

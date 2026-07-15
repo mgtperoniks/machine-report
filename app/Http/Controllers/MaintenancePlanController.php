@@ -21,7 +21,11 @@ class MaintenancePlanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = MaintenancePlan::with(['machine.documents', 'maintenanceTemplate.checklists', 'maintenanceTemplate.spareparts']);
+        $query = MaintenancePlan::with(['machine.documents', 'maintenanceTemplate.checklists', 'maintenanceTemplate.spareparts'])
+            ->whereHas('machine', function($q) {
+                $q->where('is_active', true)
+                  ->where('lifecycle_status', 'ACTIVE');
+            });
 
         // Non-dynamic database filters
         if ($request->filled('search')) {
@@ -60,7 +64,10 @@ class MaintenancePlanController extends Controller
         }
 
         // Calculate summary counters for the filter buttons
-        $allPlans = MaintenancePlan::with(['machine', 'maintenanceTemplate.spareparts'])->get();
+        $allPlans = MaintenancePlan::whereHas('machine', function($q) {
+            $q->where('is_active', true)
+              ->where('lifecycle_status', 'ACTIVE');
+        })->with(['machine', 'maintenanceTemplate.spareparts'])->get();
         $allPlans->each(function ($p) {
             $p->readiness = $this->readinessService->getReadinessReport($p);
         });

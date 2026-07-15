@@ -27,14 +27,42 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
+        // Seed Master Departments
+        $depts = [
+            ['code' => 'MACHINING', 'name' => 'Machining', 'sort_order' => 10],
+            ['code' => 'MAINTENANCE', 'name' => 'Maintenance', 'sort_order' => 20],
+            ['code' => 'ASSEMBLY', 'name' => 'Assembly Center', 'sort_order' => 30],
+            ['code' => 'WAREHOUSE', 'name' => 'Warehouse', 'sort_order' => 40],
+            ['code' => 'QC', 'name' => 'QC', 'sort_order' => 50],
+            ['code' => 'PPIC', 'name' => 'PPIC', 'sort_order' => 60],
+        ];
+        foreach ($depts as $d) {
+            \App\Models\MasterDepartment::create($d);
+        }
+
+        // Seed Master Machine Categories
+        $cats = [
+            ['code' => 'CNC', 'name' => 'CNC', 'sort_order' => 10],
+            ['code' => 'LATHE', 'name' => 'Lathe', 'sort_order' => 20],
+            ['code' => 'MILLING', 'name' => 'Milling', 'sort_order' => 30],
+            ['code' => 'DRILLING', 'name' => 'Drilling', 'sort_order' => 40],
+            ['code' => 'PUMP', 'name' => 'Pump', 'sort_order' => 50],
+            ['code' => 'COMPRESSOR', 'name' => 'Compressor', 'sort_order' => 60],
+            ['code' => 'ROBOT', 'name' => 'Robot', 'sort_order' => 70],
+            ['code' => 'PRESS', 'name' => 'Press', 'sort_order' => 80],
+        ];
+        foreach ($cats as $c) {
+            \App\Models\MasterMachineCategory::create($c);
+        }
+
         // Seed Machines
         $machinesData = [
             [
                 'code' => 'CNC-08',
                 'name' => 'CNC Milling Center',
-                'department' => 'Machining Center',
+                'department' => 'Machining',
                 'production_area' => 'Area A',
-                'category' => 'Milling Machine',
+                'category' => 'Milling',
                 'criticality' => 'high',
                 'operational_status' => 'breakdown',
                 'manufacturer' => 'Siemens',
@@ -44,6 +72,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => '2019-03-20',
                 'vendor' => 'Siemens Industrial Solutions',
                 'qr_code_path' => 'images/qr-cnc-08.png',
+                'is_active' => true,
+                'lifecycle_status' => 'ACTIVE',
                 'components' => ['Spindle Unit', 'Motor', 'Lubrication System', 'Cooling System', 'PLC'],
                 'spareparts' => ['BRG-6204', 'SEAL-TC-40', 'HYD-OIL-46'],
                 'documents' => [
@@ -63,9 +93,9 @@ class DatabaseSeeder extends Seeder
             [
                 'code' => 'CNC-04',
                 'name' => 'Precision Lathe Pro',
-                'department' => 'Machining Center',
+                'department' => 'Machining',
                 'production_area' => 'Area B',
-                'category' => 'Lathe Machine',
+                'category' => 'Lathe',
                 'criticality' => 'mission_critical',
                 'operational_status' => 'breakdown',
                 'manufacturer' => 'Haas',
@@ -75,6 +105,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => '2020-05-22',
                 'vendor' => 'Haas Automation Inc.',
                 'qr_code_path' => 'images/qr-cnc-08.png',
+                'is_active' => true,
+                'lifecycle_status' => 'ACTIVE',
                 'components' => ['Spindle Unit', 'Cooling System', 'Servo X Axis', 'Servo Z Axis'],
                 'spareparts' => ['BRG-6204', 'SEAL-TC-40'],
                 'documents' => [
@@ -96,7 +128,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Robotic Welder X1',
                 'department' => 'Assembly Center',
                 'production_area' => 'Area C',
-                'category' => 'Industrial Robot',
+                'category' => 'Robot',
                 'criticality' => 'high',
                 'operational_status' => 'maintenance',
                 'manufacturer' => 'Fanuc',
@@ -106,6 +138,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => '2021-08-18',
                 'vendor' => 'Fanuc America Corp',
                 'qr_code_path' => 'images/qr-cnc-08.png',
+                'is_active' => true,
+                'lifecycle_status' => 'ACTIVE',
                 'components' => ['Servo System', 'PLC', 'Motor', 'Lubrication Unit'],
                 'spareparts' => ['RLY-24V', 'BRG-NU22'],
                 'documents' => [
@@ -125,7 +159,7 @@ class DatabaseSeeder extends Seeder
             [
                 'code' => 'PMP-08',
                 'name' => 'Hydraulic Feed Pump',
-                'department' => 'Utilities',
+                'department' => 'Maintenance',
                 'production_area' => 'Area D',
                 'category' => 'Pump',
                 'criticality' => 'medium',
@@ -137,6 +171,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => '2018-11-12',
                 'vendor' => 'Bosch Rexroth Group',
                 'qr_code_path' => 'images/qr-cnc-08.png',
+                'is_active' => true,
+                'lifecycle_status' => 'ACTIVE',
                 'components' => ['Hydraulic Unit', 'Motor', 'Lubrication Unit'],
                 'spareparts' => ['PMP-G1', 'HYD-OIL-46'],
                 'documents' => [
@@ -158,7 +194,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Radial Drill Press',
                 'department' => 'Maintenance',
                 'production_area' => 'Workshop',
-                'category' => 'Drilling Machine',
+                'category' => 'Drilling',
                 'criticality' => 'low',
                 'operational_status' => 'running',
                 'manufacturer' => 'Carlton',
@@ -168,6 +204,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => '2015-06-25',
                 'vendor' => 'Carlton Machine Tool Co',
                 'qr_code_path' => 'images/qr-cnc-08.png',
+                'is_active' => true,
+                'lifecycle_status' => 'ACTIVE',
                 'components' => ['Motor', 'Lubrication Unit', 'Spindle Unit'],
                 'spareparts' => ['VBLT-A42'],
                 'documents' => [
@@ -202,6 +240,8 @@ class DatabaseSeeder extends Seeder
                 'commissioning_date' => $data['commissioning_date'],
                 'vendor' => $data['vendor'],
                 'qr_code_path' => $data['qr_code_path'],
+                'is_active' => $data['is_active'],
+                'lifecycle_status' => $data['lifecycle_status'],
             ]);
 
             // Components

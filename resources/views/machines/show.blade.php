@@ -43,6 +43,10 @@
                 <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
                     <x-status-badge :type="$machine->criticality" />
                     
+                    @if($machine->lifecycle_status !== 'ACTIVE')
+                        <x-status-badge type="{{ $machine->lifecycle_status === 'INACTIVE' ? 'warning' : 'low' }}" label="{{ $machine->lifecycle_status === 'INACTIVE' ? 'Nonaktif' : 'Pensiun' }}" />
+                    @endif
+                    
                     @if($machine->qr_code_path)
                         <div class="p-2 bg-white border border-outline-variant rounded shadow-sm flex items-center justify-center" title="QR Code Placeholder">
                             <img class="w-12 h-12" alt="QR Code" src="{{ asset($machine->qr_code_path) }}"/>
@@ -58,6 +62,9 @@
                 <x-button variant="secondary" icon="stethoscope" href="{{ route('breakdowns.index') }}">
                     Laporkan Kerusakan
                 </x-button>
+                <x-button variant="secondary" icon="edit" href="{{ route('machines.edit', $machine->code) }}">
+                    Edit Paspor
+                </x-button>
                 <x-button variant="secondary" icon="ios_share" href="#">
                     Ekspor Riwayat
                 </x-button>
@@ -67,19 +74,69 @@
 
     <!-- Health & Diagnostic Dashboard (Bento Grid) -->
     <div class="grid grid-cols-12 gap-6 mb-8">
-        <!-- Health Gauge Section -->
-        <div class="col-span-12 md:col-span-4 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col items-center justify-center text-center shadow-sm">
-            <p class="font-label-md text-label-md text-on-surface-variant uppercase mb-4 tracking-widest">Kesehatan Mesin</p>
-            <x-health-score :score="$machine->health_score" type="circle" />
-            
-            <div class="mt-6 w-full space-y-2">
-                <div class="flex justify-between text-label-md font-label-md">
-                    <span>Rentang Optimal</span>
-                    <span class="text-on-surface font-semibold">85% - 100%</span>
+        <!-- Left Side Bento (Health Gauge & Checklist) -->
+        <div class="col-span-12 md:col-span-4 space-y-6">
+            <!-- Health Gauge Section -->
+            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col items-center justify-center text-center shadow-sm">
+                <p class="font-label-md text-label-md text-on-surface-variant uppercase mb-4 tracking-widest">Kesehatan Mesin</p>
+                <x-health-score :score="$machine->health_score" type="circle" />
+                
+                <div class="mt-6 w-full space-y-2">
+                    <div class="flex justify-between text-label-md font-label-md">
+                        <span>Rentang Optimal</span>
+                        <span class="text-on-surface font-semibold">85% - 100%</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                        <div class="h-full bg-primary" style="width: 85%"></div>
+                    </div>
                 </div>
-                <div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div class="h-full bg-primary" style="width: 85%"></div>
-                </div>
+            </div>
+
+            <!-- Machine Identity Checklist Card -->
+            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm">
+                <h4 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">Kelengkapan Paspor Mesin</h4>
+                <ul class="space-y-3 text-body-md text-left">
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
+                        <span class="text-on-surface font-semibold">Identitas</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        @if($machine->has_photo)
+                            <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
+                            <span class="text-on-surface">Foto</span>
+                        @else
+                            <span class="material-symbols-outlined text-on-surface-variant opacity-40">cancel</span>
+                            <span class="text-on-surface-variant line-through opacity-60">Foto</span>
+                        @endif
+                    </li>
+                    <li class="flex items-center gap-3">
+                        @if($machine->has_manual)
+                            <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
+                            <span class="text-on-surface">Manual Book</span>
+                        @else
+                            <span class="material-symbols-outlined text-on-surface-variant opacity-40">cancel</span>
+                            <span class="text-on-surface-variant line-through opacity-60">Manual Book</span>
+                        @endif
+                    </li>
+                    <li class="flex items-center gap-3">
+                        @if($machine->has_qr)
+                            <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
+                            <span class="text-on-surface">QR Code</span>
+                        @else
+                            <span class="material-symbols-outlined text-on-surface-variant opacity-40">cancel</span>
+                            <span class="text-on-surface-variant line-through opacity-60">QR Code</span>
+                        @endif
+                    </li>
+                    <li class="flex items-center gap-3">
+                        @if($machine->has_spareparts)
+                            <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
+                            <span class="text-on-surface">Mapping Sparepart</span>
+                        @else
+                            <span class="material-symbols-outlined text-on-surface-variant opacity-40">cancel</span>
+                            <span class="text-on-surface-variant line-through opacity-60">Mapping Sparepart</span>
+                        @endif
+                    </li>
+                </ul>
             </div>
         </div>
 

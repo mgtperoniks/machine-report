@@ -20,9 +20,12 @@ class MaintenanceReadinessService
     public function getReadinessReport(MaintenancePlan $plan): array
     {
         if (in_array($plan->status, ['completed', 'waiting_review'])) {
+            $plan->loadMissing('execution');
+            $isWaitingReview = $plan->status === 'waiting_review' || 
+                              ($plan->execution && $plan->execution->status === 'waiting_review');
             return [
                 'plan_id' => $plan->id,
-                'overall_status' => $plan->status === 'completed' ? 'Completed' : 'Waiting Review',
+                'overall_status' => $isWaitingReview ? 'Waiting Review' : 'Completed',
                 'machine_ready' => true,
                 'machine_status_text' => 'Running (Siap)',
                 'template_available' => true,

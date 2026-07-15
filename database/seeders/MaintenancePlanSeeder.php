@@ -207,12 +207,12 @@ class MaintenancePlanSeeder extends Seeder
         $pmp08 = Machine::where('code', 'PMP-08')->first();
         $drl19 = Machine::where('code', 'DRL-19')->first();
 
-        // Plan 1: Blocked (Terblokir) due to machine down and missing sparepart (SEAL-TC-40 is 0 stock)
+        // Plan 1: Scheduled / Blocked (for CNC-08)
         if ($cnc08) {
             MaintenancePlan::create([
                 'machine_id' => $cnc08->id,
                 'maintenance_template_id' => $tplMilling->id,
-                'scheduled_date' => now()->addDay(),
+                'scheduled_date' => now(), // today
                 'assigned_technician' => 'R. Miller',
                 'priority' => 'critical',
                 'status' => 'scheduled',
@@ -221,12 +221,12 @@ class MaintenancePlanSeeder extends Seeder
             ]);
         }
 
-        // Plan 2: Blocked (Terblokir) due to machine down and missing sparepart and unassigned technician
+        // Plan 2: Blocked (Terblokir) due to machine down (breakdown) and missing sparepart (SEAL-TC-40) and unassigned technician
         if ($cnc04) {
             MaintenancePlan::create([
                 'machine_id' => $cnc04->id,
                 'maintenance_template_id' => $tplLathe->id,
-                'scheduled_date' => now()->addDays(2),
+                'scheduled_date' => now(), // today
                 'assigned_technician' => null,
                 'priority' => 'high',
                 'status' => 'draft',
@@ -240,7 +240,7 @@ class MaintenancePlanSeeder extends Seeder
             MaintenancePlan::create([
                 'machine_id' => $arm12->id,
                 'maintenance_template_id' => $tplRobot->id,
-                'scheduled_date' => now()->addDays(3),
+                'scheduled_date' => now(), // today
                 'assigned_technician' => 'S. Chen',
                 'priority' => 'medium',
                 'status' => 'approved',
@@ -254,7 +254,7 @@ class MaintenancePlanSeeder extends Seeder
             MaintenancePlan::create([
                 'machine_id' => $drl19->id,
                 'maintenance_template_id' => $tplDrill->id,
-                'scheduled_date' => now()->addDays(5),
+                'scheduled_date' => now(), // today
                 'assigned_technician' => 'R. Thompson',
                 'priority' => 'low',
                 'status' => 'approved',
@@ -268,13 +268,65 @@ class MaintenancePlanSeeder extends Seeder
             MaintenancePlan::create([
                 'machine_id' => $pmp08->id,
                 'maintenance_template_id' => $tplPump->id,
-                'scheduled_date' => now()->addDays(8),
+                'scheduled_date' => now()->addDays(3),
                 'assigned_technician' => null,
                 'priority' => 'medium',
                 'status' => 'waiting_approval',
                 'generation_source' => 'Generated',
                 'notes' => 'Kalibrasi aliran hidrolik teratur. Dibuat secara otomatis oleh Reliability Engine.',
             ]);
+        }
+
+        // Plan 6: In Progress (Sedang Berjalan)
+        if ($pmp08) {
+            MaintenancePlan::create([
+                'machine_id' => $pmp08->id,
+                'maintenance_template_id' => $tplPump->id,
+                'scheduled_date' => now(), // today
+                'assigned_technician' => 'M. Fadil',
+                'priority' => 'medium',
+                'status' => 'in_progress',
+                'generation_source' => 'Manual',
+                'notes' => 'Kalibrasi aliran hidrolik. Teknisi sedang berada di area utilitas.',
+            ]);
+        }
+
+        // Plan 7: Completed / Waiting Review (PMP-08)
+        if ($pmp08) {
+            $plan7 = MaintenancePlan::create([
+                'machine_id' => $pmp08->id,
+                'maintenance_template_id' => $tplPump->id,
+                'scheduled_date' => now(), // today
+                'assigned_technician' => 'R. Miller',
+                'priority' => 'medium',
+                'status' => 'completed',
+                'generation_source' => 'Manual',
+                'notes' => 'Kalibrasi aliran hidrolik selesai dilakukan.',
+            ]);
+
+            // Create execution log for Plan 7 (waiting review)
+            $exec7 = \App\Models\MaintenanceExecution::create([
+                'maintenance_plan_id' => $plan7->id,
+                'machine_id' => $pmp08->id,
+                'operator_name' => 'R. Miller',
+                'started_at' => now()->subMinutes(95),
+                'completed_at' => now()->subMinutes(60),
+                'overall_score' => 4.25,
+                'notes' => 'Kalibrasi aliran hidrolik selesai, tekanan diatur kembali ke standar operasional.',
+                'status' => 'waiting_review',
+            ]);
+
+            // Create checklist answers
+            $checklists = $tplPump->checklists;
+            $scores = [1 => 4, 2 => 5, 3 => 3, 4 => 5];
+            foreach ($checklists as $idx => $chk) {
+                \App\Models\MaintenanceExecutionAnswer::create([
+                    'execution_id' => $exec7->id,
+                    'checklist_item_id' => $chk->id,
+                    'score' => $scores[$chk->sequence] ?? 4,
+                    'remarks' => ($scores[$chk->sequence] ?? 4) === 1 ? 'Membutuhkan perbaikan segera' : null,
+                ]);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@
         // Card styling based on readiness status
         $bannerClasses = match($statusText) {
             'Completed' => 'bg-green-50 border-green-300 text-green-900 dark:bg-green-950/20 dark:border-green-800 dark:text-green-300',
+            'Waiting Review' => 'bg-blue-50 border-blue-300 text-blue-900 dark:bg-blue-950/20 dark:border-blue-800 dark:text-blue-300',
             'Ready' => 'bg-green-50 border-green-300 text-green-900 dark:bg-green-950/20 dark:border-green-800 dark:text-green-300',
             'Almost Ready' => 'bg-orange-50 border-orange-300 text-orange-950 dark:bg-orange-950/20 dark:border-orange-800 dark:text-orange-300',
             'Blocked' => 'bg-error-container border-error/30 text-on-error-container',
@@ -19,6 +20,7 @@
 
         $statusIcon = match($statusText) {
             'Completed' => 'task_alt',
+            'Waiting Review' => 'rate_review',
             'Ready' => 'check_circle',
             'Almost Ready' => 'warning',
             'Blocked' => 'block',
@@ -26,6 +28,7 @@
 
         $statusTitle = match($statusText) {
             'Completed' => 'SELESAI (COMPLETED)',
+            'Waiting Review' => 'MENUNGGU REVIEW (WAITING REVIEW)',
             'Ready' => 'SIAP EKSEKUSI',
             'Almost Ready' => 'HAMPIR SIAP',
             'Blocked' => 'TERBLOKIR (BLOCKED)',
@@ -33,6 +36,7 @@
 
         $statusSub = match($statusText) {
             'Completed' => 'Laporan pemeliharaan telah diserahkan oleh teknisi lapangan. Detail laporan dan hasil penilaian tertera di bawah.',
+            'Waiting Review' => 'Pekerjaan pemeliharaan telah selesai dilakukan oleh teknisi dan sedang menunggu peninjauan/persetujuan Anda.',
             'Ready' => 'Semua prasyarat terpenuhi. Rencana pemeliharaan ini aman dan siap untuk dikonversi menjadi perintah kerja (work order).',
             'Almost Ready' => 'Rencana pemeliharaan ini dapat dilanjutkan, namun ada beberapa prasyarat minor yang belum lengkap.',
             'Blocked' => 'Rencana pemeliharaan tidak dapat dieksekusi saat ini karena adanya hambatan kritis pada kondisi mesin atau stok suku cadang.',
