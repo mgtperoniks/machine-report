@@ -17,12 +17,12 @@
         $colorClass = 'bg-error';
         $textClass = 'text-error';
         $strokeColor = 'text-error';
-        $statusText = 'CRITICAL';
+        $statusText = 'KRITIS';
     } elseif ($score < 80) {
         $colorClass = 'bg-orange-500';
         $textClass = 'text-orange-600';
         $strokeColor = 'text-orange-500';
-        $statusText = 'ATTENTION';
+        $statusText = 'PERHATIAN';
     }
 
     // Circular SVG math: 2 * pi * r (r=88) = 552.9

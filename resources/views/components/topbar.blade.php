@@ -27,7 +27,7 @@
         <!-- Emergency Report Button -->
         <a href="{{ route('maintenances.create') }}" class="bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-lg font-body-md flex items-center gap-2 transition-colors">
             <span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
-            Emergency Report
+            Lapor Darurat
         </a>
         
         <div class="h-8 w-px bg-outline-variant mx-2"></div>

@@ -1,12 +1,12 @@
 <x-layouts.app 
-    title="Spareparts Integration | MRM System"
-    topbar-title="Sparepart Integration"
+    title="Integrasi Sparepart | Sistem MRM"
+    topbar-title="Integrasi Sparepart"
 >
-    <x-breadcrumb :items="['Spareparts' => '']" />
+    <x-breadcrumb :items="['Sparepart' => '']" />
     
     <x-empty-state 
-        title="WMS Spareparts Integration"
-        description="This module is under development. It will integrate directly with your Warehouse Management System to verify real-time stock availability, track part consumption, and trigger alerts."
+        title="Integrasi Sparepart WMS"
+        description="Modul ini sedang dalam pengembangan. Sistem akan terintegrasi langsung dengan Warehouse Management System (WMS) untuk memverifikasi ketersediaan stok secara real-time, melacak konsumsi suku cadang, dan memicu peringatan otomatis."
         icon="inventory_2"
     />
 </x-layouts.app>

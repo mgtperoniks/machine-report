@@ -2,19 +2,32 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Models\Machine;
+
 // Executive Dashboard
 Route::get('/', function () {
-    return view('dashboard.index');
+    $totalMachines = Machine::count();
+    $healthyMachines = Machine::all()->filter(fn($m) => $m->health_score >= 85)->count();
+    $breakdowns = Machine::where('operational_status', 'breakdown')->count();
+    $maintenanceDue = Machine::where('operational_status', 'maintenance')->count();
+    
+    // Sort all machines by health score (ascending) to show the sickest machines
+    $sickestMachines = Machine::all()->sortBy('health_score')->take(5);
+
+    return view('dashboard.index', compact(
+        'totalMachines',
+        'healthyMachines',
+        'breakdowns',
+        'maintenanceDue',
+        'sickestMachines'
+    ));
 })->name('dashboard');
 
-// Machine Registry
-Route::get('/machines', function () {
-    return view('machines.index');
-})->name('machines.index');
+use App\Http\Controllers\MachineController;
 
-Route::get('/machines/{machine}', function ($machine) {
-    return view('machines.show', compact('machine'));
-})->name('machines.show');
+// Machine Registry
+Route::get('/machines', [MachineController::class, 'index'])->name('machines.index');
+Route::get('/machines/{machine}', [MachineController::class, 'show'])->name('machines.show');
 
 // Maintenance Management
 Route::get('/maintenances', function () {
@@ -35,10 +48,18 @@ Route::get('/spareparts', function () {
     return view('spareparts.index');
 })->name('spareparts.index');
 
+use App\Http\Controllers\MaintenancePlanController;
+use App\Http\Controllers\MaintenanceExecutionController;
+
 // Planning
-Route::get('/planning', function () {
-    return view('planning.index');
-})->name('planning.index');
+Route::get('/planning', [MaintenancePlanController::class, 'index'])->name('planning.index');
+Route::get('/planning/{plan}', [MaintenancePlanController::class, 'show'])->name('planning.show');
+
+// Mobile/QR Checklist Execution
+Route::get('/machines/qr/{machineCode}/execute', [MaintenanceExecutionController::class, 'qrEntry'])->name('planning.qr-entry');
+Route::get('/planning/{plan}/execute', [MaintenanceExecutionController::class, 'create'])->name('planning.execute');
+Route::post('/planning/{plan}/execute', [MaintenanceExecutionController::class, 'store'])->name('planning.store-execute');
+Route::get('/planning/{plan}/print', [MaintenanceExecutionController::class, 'print'])->name('planning.print');
 
 // Reports
 Route::get('/reports', function () {

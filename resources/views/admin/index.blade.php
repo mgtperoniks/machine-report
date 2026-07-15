@@ -1,12 +1,12 @@
 <x-layouts.app 
-    title="System Administration | MRM System"
-    topbar-title="Administration"
+    title="Administrasi Sistem | Sistem MRM"
+    topbar-title="Administrasi"
 >
-    <x-breadcrumb :items="['Administration' => '']" />
+    <x-breadcrumb :items="['Administrasi' => '']" />
     
     <x-empty-state 
-        title="System Administration"
-        description="This module is under development. Here you will be able to configure system variables, manage departments, customize checklist items, and handle user credentials."
+        title="Administrasi Sistem"
+        description="Modul ini sedang dalam pengembangan. Di sini Anda akan dapat mengonfigurasi variabel sistem, mengelola departemen, menyesuaikan item checklist, dan mengelola kredensial pengguna."
         icon="settings"
     />
 </x-layouts.app>

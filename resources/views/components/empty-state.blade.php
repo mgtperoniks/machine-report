@@ -1,6 +1,6 @@
 @props([
-    'title' => 'Coming Soon',
-    'description' => 'This module is currently under active clinical development.',
+    'title' => 'Segera Hadir',
+    'description' => 'Modul ini saat ini sedang dalam pengembangan aktif.',
     'icon' => 'hourglass_empty'
 ])
 
@@ -10,6 +10,6 @@
     <p class="font-body-md text-body-md text-on-surface-variant max-w-md mb-6">{{ $description }}</p>
     <a href="{{ route('dashboard') }}" class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2 rounded-lg font-body-md inline-flex items-center gap-2 transition-colors">
         <span class="material-symbols-outlined">arrow_back</span>
-        Return to Dashboard
+        Kembali ke Dashboard
     </a>
 </div>

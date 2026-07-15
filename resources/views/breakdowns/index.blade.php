@@ -1,12 +1,12 @@
 <x-layouts.app 
-    title="Breakdown & Downtime | MRM System"
-    topbar-title="Breakdowns"
+    title="Kerusakan & Downtime | Sistem MRM"
+    topbar-title="Kerusakan"
 >
-    <x-breadcrumb :items="['Breakdowns' => '']" />
+    <x-breadcrumb :items="['Kerusakan' => '']" />
     
     <x-empty-state 
-        title="Breakdown & Downtime Management"
-        description="This module is under development. Soon you will be able to report symptoms, track mean-time-to-repair (MTTR), and monitor equipment failures."
+        title="Manajemen Kerusakan & Downtime"
+        description="Modul ini sedang dalam pengembangan. Segera Anda akan dapat melaporkan gejala kerusakan, melacak mean-time-to-repair (MTTR), dan memantau kegagalan peralatan."
         icon="emergency_home"
     />
 </x-layouts.app>
