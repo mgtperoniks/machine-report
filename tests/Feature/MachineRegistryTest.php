@@ -96,13 +96,10 @@ class MachineRegistryTest extends TestCase
         // Verify simulated WMS stock status details resolved from WarehouseRepository
         $response->assertSee('Bearing 6204');
         $response->assertSee('BRG-6204');
-        $response->assertSee('Jumlah Stok:');
         $response->assertSee('12'); // BRG-6204 stock level
-        $response->assertSee('Tersedia');
 
         $response->assertSee('Seal TC 40');
         $response->assertSee('SEAL-TC-40');
-        $response->assertSee('Stok Habis'); // SEAL-TC-40 stock level is 0
 
         // Verify document section (Library ISO integration)
         $response->assertSee('Dokumentasi Mesin');

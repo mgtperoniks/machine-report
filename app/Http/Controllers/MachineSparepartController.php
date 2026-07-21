@@ -2,30 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Integrations\WMS\Repositories\SparepartLookupRepositoryInterface;
+use App\Integrations\WMS\Services\MachineSparepartService;
 use App\Models\Machine;
 use App\Models\MachineRequiredSparepart;
-use App\Repositories\WarehouseRepositoryInterface;
 use Illuminate\Http\Request;
 
 class MachineSparepartController extends Controller
 {
-    protected WarehouseRepositoryInterface $warehouseRepo;
-
-    public function __construct(WarehouseRepositoryInterface $warehouseRepo)
-    {
-        $this->warehouseRepo = $warehouseRepo;
-    }
+    public function __construct(
+        protected MachineSparepartService $sparepartService,
+        protected SparepartLookupRepositoryInterface $sparepartLookupRepository
+    ) {}
 
     /**
      * Autocomplete search for spareparts from WMS.
      */
     public function search(Request $request, string $machineCode)
     {
-        // Verify machine exists
         Machine::where('code', $machineCode)->firstOrFail();
         
         $query = $request->input('q', '');
-        $results = $this->warehouseRepo->searchItems($query);
+        $results = $this->sparepartService->searchSpareparts($query);
         
         return response()->json($results);
     }
@@ -43,9 +41,9 @@ class MachineSparepartController extends Controller
 
         $itemCode = strtoupper(trim($validated['warehouse_item_code']));
 
-        // Retrieve item from WMS and check if it is a real item
-        $item = $this->warehouseRepo->getItemDetails($itemCode);
-        if ($item['location'] === 'Unknown' && $item['supplier'] === 'Unknown') {
+        // Retrieve item from WMS
+        $itemDto = $this->sparepartLookupRepository->getItemDetails($itemCode);
+        if (!$itemDto->isOffline && str_starts_with($itemDto->name, 'Sparepart Unmapped')) {
             return response()->json([
                 'message' => 'Sparepart tidak ditemukan pada Warehouse Management System.'
             ], 422);
@@ -71,15 +69,7 @@ class MachineSparepartController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Mapping sparepart berhasil ditambahkan.',
-            'mapping' => [
-                'code' => $item['code'],
-                'name' => $item['name'],
-                'stock' => $item['stock'],
-                'location' => $item['location'],
-                'supplier' => $item['supplier'],
-                'availability' => $item['availability'],
-                'mapping_id' => $mapping->id,
-            ]
+            'mapping' => array_merge($itemDto->toArray(), ['mapping_id' => $mapping->id])
         ]);
     }
 
@@ -88,7 +78,6 @@ class MachineSparepartController extends Controller
      */
     public function destroy(string $machineCode, MachineRequiredSparepart $mapping)
     {
-        // Deleting only the mapping relationship, never the inventory
         $mapping->delete();
 
         if (request()->ajax() || request()->wantsJson()) {

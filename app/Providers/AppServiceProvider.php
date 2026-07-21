@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Integrations\WMS\Repositories\SparepartLookupRepositoryInterface;
+use App\Integrations\WMS\Repositories\DatabaseSparepartLookupRepository;
 use App\Repositories\WarehouseRepositoryInterface;
-use App\Repositories\MockWarehouseRepository;
+use App\Repositories\WarehouseRepositoryAdapter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(WarehouseRepositoryInterface::class, MockWarehouseRepository::class);
+        $this->app->bind(SparepartLookupRepositoryInterface::class, DatabaseSparepartLookupRepository::class);
+        $this->app->bind(WarehouseRepositoryInterface::class, WarehouseRepositoryAdapter::class);
     }
 
     /**

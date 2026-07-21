@@ -43,7 +43,7 @@ class RealMachineSeederTest extends TestCase
         $this->assertEquals('BAHAN BAKU', $press->production_area);
         $this->assertNotNull($press->production_area_id);
 
-        $bubut = Machine::where('code', 'N-BC.80')->first();
+        $bubut = Machine::where('code', 'H-BC.01')->first();
         $this->assertNotNull($bubut);
         $this->assertEquals('Lathe', $bubut->category);
 

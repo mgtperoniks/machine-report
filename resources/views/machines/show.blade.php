@@ -85,121 +85,119 @@
     <div class="grid grid-cols-12 gap-6 mb-8">
         <!-- Left Side Bento (Health Gauge & Checklist) -->
         <div class="col-span-12 md:col-span-4 space-y-6">
-            <!-- Health Gauge Section -->
-            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col items-center justify-center text-center shadow-sm">
-                <p class="font-label-md text-label-md text-on-surface-variant uppercase mb-4 tracking-widest">Kesehatan Mesin</p>
-                <x-health-score :score="$machine->health_score" type="circle" />
-                
-                <div class="mt-6 w-full space-y-2">
-                    <div class="flex justify-between text-label-md font-label-md">
-                        <span>Rentang Optimal</span>
-                        <span class="text-on-surface font-semibold">85% - 100%</span>
+            <!-- Health Gauge Section (Compact CMMS Strip ~105px) -->
+            <div class="bg-surface-container-lowest border border-outline-variant/60 p-4 rounded-xl shadow-2xs">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-label-md text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Kesehatan Mesin</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        {{ $machine->health_score }}% • OPTIMAL
+                    </span>
+                </div>
+                <div class="w-full space-y-1.5 mt-1">
+                    <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 transition-all duration-500" style="width: {{ min(100, max(0, $machine->health_score)) }}%"></div>
                     </div>
-                    <div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                        <div class="h-full bg-primary" style="width: 85%"></div>
+                    <div class="flex justify-between text-[11px] text-on-surface-variant font-medium">
+                        <span>Target Operasional</span>
+                        <span class="font-bold text-on-surface">85% - 100%</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Machine Identity Checklist Card -->
-            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm">
-                <h4 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">Kelengkapan Paspor Mesin</h4>
-                <ul class="space-y-3 text-body-md text-left">
-                    <!-- Identitas -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('identitas')">
-                        <div class="flex items-center gap-3" id="checklist-icon-identitas">
-                            @if($machine->has_identitas)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">Identitas</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">Identitas</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
-                    </li>
-
-                    <!-- Sparepart -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('sparepart')">
-                        <div class="flex items-center gap-3" id="checklist-icon-sparepart">
-                            @if($machine->has_spareparts)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">Sparepart</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">Sparepart</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
-                    </li>
-
-                    <!-- Manual Book -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('manual')">
-                        <div class="flex items-center gap-3" id="checklist-icon-manual_book">
-                            @if($machine->has_manual)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">Manual Book</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">Manual Book</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">upload_file</span>
-                    </li>
-
-                    <!-- Foto Mesin -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('photo')">
-                        <div class="flex items-center gap-3" id="checklist-icon-foto">
-                            @if($machine->has_photo)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">Foto Mesin</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">Foto Mesin</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">add_a_photo</span>
-                    </li>
-
-                    <!-- QR Code -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('qr')">
-                        <div class="flex items-center gap-3" id="checklist-icon-qr">
-                            @if($machine->has_qr)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">QR Code</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">QR Code</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">qr_code</span>
-                    </li>
-
-                    <!-- Komponen -->
-                    <li class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors group" onclick="navigateChecklist('components')">
-                        <div class="flex items-center gap-3" id="checklist-icon-komponen">
-                            @if($machine->has_components)
-                                <span class="material-symbols-outlined text-green-600 font-bold">check_circle</span>
-                                <span class="text-on-surface font-semibold">Komponen</span>
-                            @else
-                                <span class="material-symbols-outlined text-outline font-bold">radio_button_unchecked</span>
-                                <span class="text-on-surface-variant">Komponen</span>
-                            @endif
-                        </div>
-                        <span class="material-symbols-outlined text-[16px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">settings</span>
-                    </li>
-                </ul>
+            <!-- Machine Identity Checklist Card (Compact Audit Grid ~105px) -->
+            <div class="bg-surface-container-lowest border border-outline-variant/60 p-4 rounded-xl shadow-2xs">
                 @php
                     $progress = $machine->completion_progress;
                 @endphp
-                <div class="mt-6 pt-4 border-t border-outline-variant">
-                    <div class="flex justify-between text-body-sm font-semibold text-on-surface mb-2">
-                        <span>Progress Kelengkapan</span>
-                        <span id="checklist-progress-text">{{ $progress['completed'] }} dari {{ $progress['total'] }} Selesai</span>
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-outline-variant/40">
+                    <h4 class="font-label-md text-[11px] text-primary uppercase tracking-wider font-bold">Kelengkapan Paspor</h4>
+                    <span id="checklist-progress-text" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        {{ $progress['completed'] }}/{{ $progress['total'] }} Complete
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1 text-xs text-left my-1.5">
+                    <!-- Identitas -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('identitas')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-identitas">
+                            @if($machine->has_identitas)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">Identitas</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">Identitas</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                        <div id="checklist-progress-bar" class="h-full bg-green-600 transition-all duration-500" style="width: {{ $progress['total'] > 0 ? ($progress['completed'] / $progress['total']) * 100 : 0 }}%"></div>
+
+                    <!-- Sparepart -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('sparepart')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-sparepart">
+                            @if($machine->has_spareparts)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">Sparepart</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">Sparepart</span>
+                            @endif
+                        </div>
                     </div>
+
+                    <!-- Manual Book -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('manual')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-manual_book">
+                            @if($machine->has_manual)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">Manual</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">Manual</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Foto Mesin -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('photo')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-foto">
+                            @if($machine->has_photo)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">Foto</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">Foto</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('qr')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-qr">
+                            @if($machine->has_qr)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">QR Code</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">QR Code</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Komponen -->
+                    <div class="flex items-center justify-between cursor-pointer hover:bg-surface-container-low px-1.5 py-1 rounded transition-colors group" onclick="navigateChecklist('components')">
+                        <div class="flex items-center gap-1 min-w-0" id="checklist-icon-komponen">
+                            @if($machine->has_components)
+                                <span class="material-symbols-outlined text-green-600 font-bold text-[14px] shrink-0">check_circle</span>
+                                <span class="text-on-surface font-semibold text-[11px] truncate">Komponen</span>
+                            @else
+                                <span class="material-symbols-outlined text-outline font-bold text-[14px] shrink-0">radio_button_unchecked</span>
+                                <span class="text-on-surface-variant text-[11px] truncate">Komponen</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden mt-2">
+                    <div id="checklist-progress-bar" class="h-full bg-emerald-500 transition-all duration-500" style="width: {{ $progress['total'] > 0 ? ($progress['completed'] / $progress['total']) * 100 : 0 }}%"></div>
                 </div>
             </div>
         </div>
@@ -350,50 +348,101 @@
 
                 <!-- Panel 3: Spareparts (Warehouse integration) -->
                 <div id="panel-spareparts" class="tab-panel p-6 hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="font-label-md text-label-md text-primary uppercase tracking-wider">Kebutuhan Sparepart</h4>
-                        <div class="flex gap-2">
-                            <button id="btn-open-sparepart-modal" class="px-3 py-1.5 bg-primary text-on-primary rounded-lg font-semibold text-xs flex items-center gap-1.5 hover:bg-primary-container transition-colors shadow-sm">
-                                <span class="material-symbols-outlined text-[16px]">add</span> Tambah Mapping Sparepart
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 pb-2.5 border-b border-outline-variant/60">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 rounded-lg bg-primary/10 text-primary">
+                                <span class="material-symbols-outlined text-[18px]">settings_input_component</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-xs text-primary uppercase tracking-wider font-bold">Kebutuhan Sparepart</h4>
+                                <p class="text-[11px] text-on-surface-variant">Live stock & referensi pemetaan sparepart untuk perawatan mesin.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button id="btn-open-sparepart-modal" class="px-2.5 py-1 bg-primary text-on-primary rounded-lg font-semibold text-xs flex items-center gap-1 hover:bg-primary-container transition-colors shadow-2xs">
+                                <span class="material-symbols-outlined text-[15px]">add</span> Tambah Mapping
                             </button>
-                            <span class="inline-flex items-center gap-1 text-[11px] text-on-surface-variant font-bold bg-surface-container px-2 py-0.5 rounded border border-outline-variant">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Terhubung ke WMS
+                            <span class="inline-flex items-center gap-1 text-[11px] text-on-surface-variant font-bold bg-surface-container px-2 py-0.5 rounded-lg border border-outline-variant/60">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> WMS Connected
                             </span>
                         </div>
                     </div>
 
-                    <div class="mb-4 bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-body-sm flex gap-3 items-start">
-                        <span class="material-symbols-outlined text-[20px] mt-0.5">info</span>
-                        <p>
-                            <strong>Warehouse adalah Sumber Informasi Utama (Single Source of Truth):</strong> Detail stok dan status ketersediaan diambil langsung dari Warehouse Management System (WMS). Hubungan sparepart dengan mesin dikelola di sini secara progresif.
-                        </p>
+                    <div class="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-2xs">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-surface-container-low/80 font-bold uppercase tracking-wider text-[10px] text-on-surface-variant border-b border-outline-variant/60">
+                                <tr>
+                                    <th scope="col" class="py-2 px-3">Sparepart</th>
+                                    <th scope="col" class="py-2 px-3">Stock</th>
+                                    <th scope="col" class="py-2 px-3">Shared</th>
+                                    <th scope="col" class="py-2 px-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="spareparts-list" class="divide-y divide-outline-variant/40">
+                                @forelse($sparepartsView as $item)
+                                    @php
+                                        /** @var \App\Integrations\WMS\DTOs\SparepartItemDTO $dto */
+                                        $dto = $item['dto'];
+                                        $status = $item['status'];
+                                        $unitUpper = strtoupper(trim($dto->unit));
+                                        $isPcs = ($unitUpper === 'PCS' || empty($unitUpper));
+                                        $unitDisplay = $isPcs ? '' : ' ' . $dto->unit;
+                                    @endphp
+                                    <tr class="hover:bg-surface-container-low/60 transition-colors sparepart-row h-[44px]" data-mapping-id="{{ $item['mapping_id'] }}">
+                                        <td class="py-1.5 px-3 max-w-[280px] lg:max-w-[360px]">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="font-bold text-on-surface text-xs truncate" title="{{ $dto->name }}">{{ $dto->name }}</span>
+                                                <span class="mono font-bold text-[10px] px-1 py-0.2 rounded bg-surface-container border border-outline-variant/60 text-on-surface-variant shrink-0" title="ERP Code">{{ $dto->erpCode }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-1.5 px-3 whitespace-nowrap">
+                                            @if($dto->isOffline)
+                                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full border border-gray-300 dark:border-gray-700">
+                                                    ⚪ WMS Offline
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold mono border {{ $status['badge_class'] }}">
+                                                    <span>{{ $status['icon'] }}</span>
+                                                    <span>{{ $dto->stock }}{{ $unitDisplay }}</span>
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="py-1.5 px-3 whitespace-nowrap">
+                                            @if($item['shared_count'] > 0)
+                                                <button type="button" onclick="openSharedMachinesModal({{ json_encode($item['shared_machines']) }}, '{{ addslashes($dto->name) }}')" class="px-2 py-0.5 bg-surface-container border border-outline-variant/60 text-on-surface text-[11px] font-bold rounded-md hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all inline-flex items-center gap-1" title="Lihat {{ $item['shared_count'] }} paspor mesin lain yang menggunakan sparepart ini">
+                                                    <span class="material-symbols-outlined text-[13px] text-primary">groups</span>
+                                                    <span>👥{{ $item['shared_count'] }}</span>
+                                                </button>
+                                            @else
+                                                <span class="text-on-surface-variant/40 text-[11px] font-medium">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-1.5 px-3 text-right whitespace-nowrap">
+                                            <div class="inline-flex items-center justify-end gap-1">
+                                                @if($item['open_wms_url'])
+                                                    <a href="{{ $item['open_wms_url'] }}" target="_blank" class="p-1 text-primary hover:bg-primary/10 rounded-md transition-colors" title="Open Warehouse">
+                                                        <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                                                    </a>
+                                                @endif
+                                                <button type="button" class="p-1 text-error hover:bg-error-container/20 rounded-md transition-colors btn-delete-mapping" data-url="{{ route('machines.spareparts.destroy', [$machine->code, $item['mapping_id']]) }}" title="Hapus Mapping">
+                                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr id="spareparts-empty-state">
+                                        <td colspan="4" class="text-center py-6 text-on-surface-variant text-xs italic">
+                                            Belum ada kebutuhan sparepart yang dipetakan untuk mesin ini.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div id="spareparts-list" class="divide-y divide-outline-variant">
-                        @forelse($sparepartsDetails as $part)
-                            <div class="py-3 flex justify-between items-center sparepart-row" data-mapping-id="{{ $part['mapping_id'] }}">
-                                <div>
-                                    <p class="font-body-md font-bold text-on-surface">{{ $part['name'] }}</p>
-                                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kode WMS: <span class="mono font-semibold">{{ $part['code'] }}</span></p>
-                                    <p class="text-xs text-on-surface-variant mt-0.5">Lokasi: <span class="mono">{{ $part['location'] }}</span> | Supplier: {{ $part['supplier'] }}</p>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="text-right flex flex-col items-end gap-1">
-                                        <span class="font-label-md text-label-md text-on-surface-variant font-bold">Jumlah Stok: <span class="mono text-on-surface">{{ $part['stock'] }}</span></span>
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $part['stock'] > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }}">
-                                            {{ $part['availability'] === 'Available' ? 'Tersedia' : 'Stok Habis' }}
-                                        </span>
-                                    </div>
-                                    <button type="button" class="p-1 text-error hover:bg-error-container/20 rounded transition-colors btn-delete-mapping" data-url="{{ route('machines.spareparts.destroy', [$machine->code, $part['mapping_id']]) }}" title="Hapus Mapping">
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        @empty
-                            <div id="spareparts-empty-state" class="text-center py-8 text-on-surface-variant">
-                                Belum ada kebutuhan sparepart yang dipetakan untuk mesin ini.
-                            </div>
-                        @endforelse
+                    <div class="mt-3 text-right text-[10px] text-on-surface-variant italic">
+                        "Data live stock terhubung langsung dari Warehouse Management System (WMS)."
                     </div>
                 </div>
 
@@ -886,7 +935,31 @@
                         <span class="material-symbols-outlined text-[16px]">save</span> Simpan Perubahan
                     </button>
                 </div>
-            </form>
+    <!-- Modal Shared Machines Lookup -->
+    <div id="modal-shared-machines" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden backdrop-blur-xs">
+        <div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-2xl max-w-md w-full mx-4 shadow-2xl space-y-3">
+            <div class="flex items-center justify-between pb-2.5 border-b border-outline-variant/60">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">groups</span>
+                    <div>
+                        <h3 class="font-bold text-xs text-on-surface">Shared Machine Passports</h3>
+                        <p id="shared-machines-modal-title" class="text-[11px] text-on-surface-variant font-medium truncate max-w-[260px]"></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSharedMachinesModal()" class="p-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-all">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+
+            <p class="text-[11px] text-on-surface-variant">Sparepart ini juga digunakan oleh paspor mesin berikut:</p>
+
+            <div id="shared-machines-modal-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+                <!-- Dynamic List -->
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-outline-variant/60">
+                <button type="button" onclick="closeSharedMachinesModal()" class="px-3 py-1 bg-surface-container text-on-surface rounded-lg font-bold text-xs hover:brightness-95 transition-all">Tutup</button>
+            </div>
         </div>
     </div>
 
@@ -1075,9 +1148,16 @@
                                 row.innerHTML = `
                                     <div>
                                         <div class="font-body-md font-bold text-on-surface">${item.name}</div>
-                                        <div class="text-xs text-on-surface-variant uppercase tracking-wider mono">${item.code} | Stok: ${item.stock}</div>
+                                        <div class="text-xs text-on-surface-variant flex flex-wrap gap-2 mt-0.5">
+                                            <span>ERP: <strong class="mono text-on-surface">${item.code}</strong></span>
+                                            <span>Brand: <strong>${item.brand || '-'}</strong></span>
+                                            <span>Rak: <strong class="mono">${item.location || '-'}</strong></span>
+                                        </div>
                                     </div>
-                                    <span class="material-symbols-outlined text-primary text-[20px]">add_circle</span>
+                                    <div class="text-right flex items-center gap-2">
+                                        <span class="text-xs font-bold mono ${item.stock > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}">Stok: ${item.stock}</span>
+                                        <span class="material-symbols-outlined text-primary text-[20px]">add_circle</span>
+                                    </div>
                                 `;
                                 row.addEventListener('click', () => {
                                     mapSparepart(item.code);
@@ -1113,8 +1193,7 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        appendSparepartRow(data.mapping);
-                        closeModal();
+                        window.location.reload();
                     }
                 })
                 .catch(err => {
@@ -1130,31 +1209,45 @@
                     emptyState.remove();
                 }
 
-                const row = document.createElement('div');
-                row.className = 'py-3 flex justify-between items-center sparepart-row';
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-surface-container-low/60 transition-colors sparepart-row h-[44px]';
                 row.setAttribute('data-mapping-id', item.mapping_id);
 
-                const badgeClass = item.stock > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700';
-                const availabilityLabel = item.availability === 'Available' ? 'Tersedia' : 'Stok Habis';
+                const unitUpper = (item.unit || '').trim().toUpperCase();
+                const isPcs = (!unitUpper || unitUpper === 'PCS');
+                const unitStr = isPcs ? '' : ' ' + item.unit;
+
+                let stockBadge = '';
+                if (item.isOffline) {
+                    stockBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full border border-gray-300 dark:border-gray-700">⚪ WMS Offline</span>`;
+                } else if (item.stock > 0) {
+                    stockBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold mono border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">🟢 ${item.stock}${unitStr}</span>`;
+                } else {
+                    stockBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold mono border bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20">🔴 0${unitStr}</span>`;
+                }
+
                 const destroyUrl = `{{ url('/machines/' . $machine->code . '/spareparts') }}/${item.mapping_id}`;
 
                 row.innerHTML = `
-                    <div>
-                        <p class="font-body-md font-bold text-on-surface">${item.name}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kode WMS: <span class="mono font-semibold">${item.code}</span></p>
-                        <p class="text-xs text-on-surface-variant mt-0.5">Lokasi: <span class="mono">${item.location}</span> | Supplier: ${item.supplier}</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="text-right flex flex-col items-end gap-1">
-                            <span class="font-label-md text-label-md text-on-surface-variant font-bold">Jumlah Stok: <span class="mono text-on-surface">${item.stock}</span></span>
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${badgeClass}">
-                                ${availabilityLabel}
-                            </span>
+                    <td class="py-1.5 px-3 max-w-[280px] lg:max-w-[360px]">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-on-surface text-xs truncate" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+                            <span class="mono font-bold text-[10px] px-1 py-0.2 rounded bg-surface-container border border-outline-variant/60 text-on-surface-variant shrink-0" title="ERP Code">${escapeHtml(item.code || '-')}</span>
                         </div>
-                        <button type="button" class="p-1 text-error hover:bg-error-container/20 rounded transition-colors btn-delete-mapping" data-url="${destroyUrl}" title="Hapus Mapping">
-                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                        </button>
-                    </div>
+                    </td>
+                    <td class="py-1.5 px-3 whitespace-nowrap">
+                        ${stockBadge}
+                    </td>
+                    <td class="py-1.5 px-3 whitespace-nowrap">
+                        <span class="text-on-surface-variant/40 text-[11px] font-medium">-</span>
+                    </td>
+                    <td class="py-1.5 px-3 text-right whitespace-nowrap">
+                        <div class="inline-flex items-center justify-end gap-1">
+                            <button type="button" class="p-1 text-error hover:bg-error-container/20 rounded-md transition-colors btn-delete-mapping" data-url="${destroyUrl}" title="Hapus Mapping">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
                 `;
 
                 row.querySelector('.btn-delete-mapping').addEventListener('click', function() {
@@ -1193,9 +1286,11 @@
                         const list = document.getElementById('spareparts-list');
                         if (list.children.length === 0) {
                             list.innerHTML = `
-                                <div id="spareparts-empty-state" class="text-center py-8 text-on-surface-variant">
-                                    Belum ada kebutuhan sparepart yang dipetakan untuk mesin ini.
-                                </div>
+                                <tr id="spareparts-empty-state">
+                                    <td colspan="4" class="text-center py-6 text-on-surface-variant text-xs italic">
+                                        Belum ada kebutuhan sparepart yang dipetakan untuk mesin ini.
+                                    </td>
+                                </tr>
                             `;
                         }
                     }
@@ -1212,6 +1307,39 @@
                 });
             });
         });
+
+        // Shared Machines Modal handlers
+        window.openSharedMachinesModal = function(machines, name) {
+            const listContainer = document.getElementById('shared-machines-modal-list');
+            document.getElementById('shared-machines-modal-title').textContent = name;
+            
+            listContainer.innerHTML = '';
+            if (Array.isArray(machines)) {
+                machines.forEach(m => {
+                    const item = document.createElement('a');
+                    item.href = `/machines/${encodeURIComponent(m.code)}`;
+                    item.target = '_blank';
+                    item.className = 'p-2 rounded-lg border border-outline-variant/60 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-[16px]">precision_manufacturing</span>
+                            <div>
+                                <p class="mono font-bold text-xs text-primary group-hover:underline">${escapeHtml(m.code)}</p>
+                                <p class="text-[11px] text-on-surface-variant line-clamp-1">${escapeHtml(m.name)}</p>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-[14px] text-on-surface-variant group-hover:text-primary">arrow_forward</span>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            }
+            
+            document.getElementById('modal-shared-machines').classList.remove('hidden');
+        };
+
+        window.closeSharedMachinesModal = function() {
+            document.getElementById('modal-shared-machines').classList.add('hidden');
+        };
 
         // Global functions for checklist navigation and upload placeholder
         window.navigateChecklist = function(item) {

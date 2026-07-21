@@ -221,12 +221,9 @@ class MachineController extends Controller
             app(\App\Services\MachineQrCodeService::class)->ensureExists($machine);
         }
 
-        // Map required spareparts with WMS details and keep their local relationship id
-        $sparepartsDetails = $machine->requiredSpareparts->map(function ($required) {
-            $details = $this->warehouseRepo->getItemDetails($required->warehouse_item_code);
-            $details['mapping_id'] = $required->id;
-            return $details;
-        });
+        // Get complete live spareparts view data within strict 3-query budget via Service Layer
+        $sparepartsView = app(\App\Integrations\WMS\Services\MachineSparepartService::class)
+            ->getMachineSparepartsView($machine);
 
         // Fetch oldest active (non-completed/non-cancelled) plan for this machine
         $activePlan = MaintenancePlan::where('machine_id', $machine->id)
@@ -234,7 +231,7 @@ class MachineController extends Controller
             ->orderBy('scheduled_date', 'asc')
             ->first();
 
-        return view('machines.show', compact('machine', 'sparepartsDetails', 'activePlan'));
+        return view('machines.show', compact('machine', 'sparepartsView', 'activePlan'));
     }
 
     /**

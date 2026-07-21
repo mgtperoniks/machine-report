@@ -3,7 +3,11 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'MRM System' }}</title>
+    
+    <!-- Vite Entrypoint & Global JS Modules -->
+    @vite(['resources/js/app.js'])
     
     <!-- Tailwind CSS with Plugins -->
     <script src="{{ asset('js/tailwind.js') }}"></script>
