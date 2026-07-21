@@ -4,38 +4,36 @@
     'activeSubnav' => null
 ])
 
-<header class="fixed top-0 right-0 w-[calc(100%-208px)] h-16 bg-surface-bright dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-desktop z-40 shadow-sm dark:shadow-none ml-52">
-    <div class="flex items-center gap-8">
-        <h2 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-surface">{{ $title }}</h2>
-        
+<header class="fixed top-0 left-0 right-0 lg:left-52 h-16 bg-surface-bright dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center px-4 lg:px-margin-desktop z-40 shadow-sm dark:shadow-none">
+    <div class="flex items-center gap-3 lg:gap-8 min-w-0">
+        <!-- Hamburger (mobile only) -->
+        <button id="hamburger-btn" onclick="openMobileDrawer()" class="lg:hidden shrink-0 w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" aria-label="Buka Menu">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <h2 class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">{{ $title }}</h2>
+
         @if(!empty($subnav))
-            <nav class="hidden md:flex gap-6">
+            <nav class="hidden md:flex gap-6 shrink-0">
                 @foreach($subnav as $label => $url)
-                    @php
-                        $isActive = ($activeSubnav === $label);
-                    @endphp
-                    <a class="{{ $isActive ? 'text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1' : 'text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed' }} transition-all font-body-md text-body-md" 
-                       href="{{ $url }}">
-                        {{ $label }}
-                    </a>
+                    @php $isActive = ($activeSubnav === $label); @endphp
+                    <a class="{{ $isActive ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface-variant hover:text-primary' }} transition-all font-body-md text-body-md whitespace-nowrap"
+                       href="{{ $url }}">{{ $label }}</a>
                 @endforeach
             </nav>
         @endif
     </div>
-    
-    <div class="flex items-center gap-4">
-        <!-- Emergency Report Button -->
-        <a href="{{ route('breakdowns.index') }}" class="bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-lg font-body-md flex items-center gap-2 transition-colors">
-            <span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
-            Lapor Darurat
+
+    <div class="flex items-center gap-2 lg:gap-4 shrink-0">
+        <!-- Emergency Report Button: icon-only on mobile, full on desktop -->
+        <a href="{{ route('breakdowns.index') }}" class="bg-primary hover:bg-primary-container text-on-primary h-10 px-3 lg:px-4 rounded-lg font-body-md flex items-center gap-2 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">warning</span>
+            <span class="hidden sm:inline">Lapor Darurat</span>
         </a>
-        
-        <div class="h-8 w-px bg-outline-variant mx-2"></div>
-        
-        <!-- Notifications & Profile Icons -->
-        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="notifications">notifications</span>
-        
-        <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary cursor-pointer hover:brightness-110 transition-all">
+
+        <div class="hidden lg:block h-8 w-px bg-outline-variant"></div>
+
+        <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary cursor-pointer hover:brightness-110 transition-all">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
         </div>
     </div>

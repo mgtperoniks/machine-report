@@ -1,4 +1,4 @@
-<nav class="h-screen w-52 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-low border-r border-outline-variant dark:border-outline flex flex-col py-margin-desktop z-50">
+<nav id="mobile-drawer" class="h-screen w-72 lg:w-52 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-low border-r border-outline-variant dark:border-outline flex flex-col py-margin-desktop z-50 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="px-4 mb-6">
         <h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">MRM System</h1>
         <p class="font-label-md text-label-md opacity-70">Clinical Precision</p>

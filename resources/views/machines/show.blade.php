@@ -811,9 +811,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-body-sm font-semibold text-on-surface-variant mb-1">Pilih File Foto *</label>
-                    <input id="add-photo-file" type="file" name="file" accept=".jpg,.jpeg,.png,.webp" required onchange="previewAddPhotoFile(this)" class="w-full text-xs text-on-surface file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer">
-                    <p class="text-[11px] text-on-surface-variant mt-1">Maksimal 10 MB (Otomatis dikompresi ke 1000px, JPEG 60%).</p>
+                    <label class="block text-body-sm font-semibold text-on-surface-variant mb-1">Pilih / Ambil Foto *</label>
+                    <input id="add-photo-file" type="file" name="file"
+                           accept="image/*"
+                           capture="environment"
+                           required onchange="previewAddPhotoFile(this)"
+                           class="w-full text-xs text-on-surface file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer">
+                    <p class="text-[11px] text-on-surface-variant mt-1">Kamera belakang akan terbuka langsung. Maks. 10 MB (otomatis dikompresi).</p>
                 </div>
 
                 <!-- Preview box -->
@@ -1533,7 +1537,13 @@
                                 <h5 class="font-body-md font-bold text-on-surface text-sm truncate" title="${photo.title}">${photo.title}</h5>
                                 <div class="flex justify-between items-center text-[11px] text-on-surface-variant">
                                     <span>${photo.formatted_upload_date || ''}</span>
-                                    <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1">
+                                        <button type="button" onclick="rotatePhoto(${photo.id}, 'left')" class="p-1 hover:bg-surface-container rounded text-on-surface-variant transition-colors" title="Putar Kiri 90°">
+                                            <span class="material-symbols-outlined text-[16px]">rotate_left</span>
+                                        </button>
+                                        <button type="button" onclick="rotatePhoto(${photo.id}, 'right')" class="p-1 hover:bg-surface-container rounded text-on-surface-variant transition-colors" title="Putar Kanan 90°">
+                                            <span class="material-symbols-outlined text-[16px]">rotate_right</span>
+                                        </button>
                                         <button type="button" onclick="openEditPhotoModal(${photo.id})" class="p-1 hover:bg-surface-container rounded text-primary transition-colors" title="Edit Metadata">
                                             <span class="material-symbols-outlined text-[16px]">edit</span>
                                         </button>
@@ -1763,6 +1773,31 @@
                 if (data.success) {
                     loadGalleryPhotos(1);
                     if (data.completion_progress) updateChecklist(data.completion_progress);
+                }
+            })
+            .catch(err => alert(err.message));
+        };
+
+        // Rotate Photo (↺ left / ↻ right)
+        window.rotatePhoto = function(id, direction) {
+            fetch(`{{ url('/machines/' . $machine->code . '/photos') }}/${id}/rotate`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ direction })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal merotasi foto.');
+                return data;
+            })
+            .then(data => {
+                if (data.success) {
+                    // Refresh gallery to show rotated thumbnails
+                    loadGalleryPhotos(1);
                 }
             })
             .catch(err => alert(err.message));

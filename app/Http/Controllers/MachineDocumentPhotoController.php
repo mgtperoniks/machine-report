@@ -352,4 +352,87 @@ class MachineDocumentPhotoController extends Controller
             'completion_progress' => $machine->completion_progress,
         ]);
     }
+
+    /**
+     * Rotate a machine photo by 90° clockwise or counter-clockwise.
+     * Replaces the existing file in-place. No new DB columns required.
+     */
+    public function rotatePhoto(Request $request, string $code, $photoId)
+    {
+        $machine = Machine::where('code', $code)->firstOrFail();
+        $photo = $machine->photos()->where('id', $photoId)->firstOrFail();
+
+        $direction = $request->input('direction', 'right'); // 'left' | 'right'
+        // imagerotate() is counter-clockwise, so: left=90, right=270
+        $degrees = $direction === 'left' ? 90 : 270;
+
+        $disk = Storage::disk('public');
+        $physicalPath = $disk->path($photo->file_path);
+
+        if (!file_exists($physicalPath)) {
+            return response()->json(['success' => false, 'message' => 'File tidak ditemukan di storage.'], 404);
+        }
+
+        try {
+            $this->rotateImageFile($physicalPath, $degrees);
+
+            // Rotate thumbnail if it exists
+            $dir = dirname($photo->file_path);
+            $filename = basename($photo->file_path);
+            $thumbRelPath = "{$dir}/thumbs/{$filename}";
+            if ($disk->exists($thumbRelPath)) {
+                $this->rotateImageFile($disk->path($thumbRelPath), $degrees);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+
+        $cacheBust = '?v=' . time();
+
+        return response()->json([
+            'success'       => true,
+            'message'       => 'Foto berhasil dirotasi.',
+            'full_url'      => $photo->full_url . $cacheBust,
+            'thumbnail_url' => $photo->thumbnail_url . $cacheBust,
+        ]);
+    }
+
+    /**
+     * Rotate a physical image file in-place using GD.
+     * imagerotate() degrees are counter-clockwise.
+     */
+    private function rotateImageFile(string $path, int $degrees): void
+    {
+        $info = getimagesize($path);
+        if (!$info) {
+            throw new \Exception("Format file gambar tidak didukung.");
+        }
+
+        $image = match ($info['mime']) {
+            'image/jpeg', 'image/jpg', 'image/pjpeg' => imagecreatefromjpeg($path),
+            'image/png'  => imagecreatefrompng($path),
+            'image/webp' => imagecreatefromwebp($path),
+            default      => throw new \Exception("MIME tidak didukung: {$info['mime']}"),
+        };
+
+        if (!$image) {
+            throw new \Exception("Gagal membaca file gambar.");
+        }
+
+        $rotated = imagerotate($image, $degrees, 0);
+        imagedestroy($image);
+
+        if (!$rotated) {
+            throw new \Exception("Gagal merotasi gambar.");
+        }
+
+        // Save back as JPEG (consistent with compression pipeline)
+        $saved = imagejpeg($rotated, $path, 85);
+        imagedestroy($rotated);
+
+        if (!$saved) {
+            throw new \Exception("Gagal menyimpan gambar yang sudah dirotasi.");
+        }
+    }
 }
+

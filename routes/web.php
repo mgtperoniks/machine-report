@@ -41,6 +41,7 @@ Route::get('/machines/{machine}/photos', [MachineDocumentPhotoController::class,
 Route::post('/machines/{machine}/photos', [MachineDocumentPhotoController::class, 'storePhoto'])->name('machines.photos.store');
 Route::put('/machines/{machine}/photos/{photo}', [MachineDocumentPhotoController::class, 'updatePhoto'])->name('machines.photos.update');
 Route::delete('/machines/{machine}/photos/{photo}', [MachineDocumentPhotoController::class, 'destroyPhoto'])->name('machines.photos.destroy');
+Route::post('/machines/{machine}/photos/{photo}/rotate', [MachineDocumentPhotoController::class, 'rotatePhoto'])->name('machines.photos.rotate');
 
 // Machine Spareparts Mapping
 Route::get('/machines/{machine}/spareparts/search', [MachineSparepartController::class, 'search'])->name('machines.spareparts.search');

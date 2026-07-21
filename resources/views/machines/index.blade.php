@@ -58,81 +58,95 @@
             
             <!-- Filters & Search Form -->
             <div class="px-4 py-3 border-b border-outline-variant bg-surface-container-low">
-                <form method="GET" action="{{ route('machines.index') }}" class="flex flex-col lg:flex-row lg:items-end gap-2.5 w-full">
-                    <!-- Keep current sort parameter -->
+                <form method="GET" action="{{ route('machines.index') }}" id="machine-filter-form">
                     <input type="hidden" name="sort_by" value="{{ $sortBy }}"/>
                     <input type="hidden" name="sort_order" value="{{ $sortOrder }}"/>
                     <input type="hidden" name="status_filter" value="{{ $statusFilter }}"/>
 
-                    <!-- Search bar -->
-                    <div class="flex-grow min-w-[200px]">
-                        <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Cari Kata Kunci</label>
-                        <div class="relative">
+                    <!-- Row 1: Search + Mobile Filter Toggle -->
+                    <div class="flex gap-2 mb-2.5">
+                        <div class="flex-grow relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                            <input name="search" value="{{ request('search') }}" class="w-full pl-9 pr-3 py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm" placeholder="Kode, Nama..." type="text"/>
+                            <input name="search" value="{{ request('search') }}" class="w-full pl-9 pr-3 py-2.5 lg:py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm" placeholder="Cari kode atau nama mesin..." type="text"/>
                         </div>
-                    </div>
-                    
-                    <!-- Department Filter -->
-                    <div class="w-full lg:w-44">
-                        <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Departemen</label>
-                        <select name="department" class="w-full px-2.5 py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                            <option value="">Semua Departemen</option>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept }}" {{ request('department') === $dept ? 'selected' : '' }}>{{ $dept }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Category Filter -->
-                    <div class="w-full lg:w-40">
-                        <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Kategori</label>
-                        <select name="category" class="w-full px-2.5 py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                            <option value="">Semua Kategori</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Criticality Filter -->
-                    <div class="w-full lg:w-40">
-                        <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Prioritas</label>
-                        <select name="criticality" class="w-full px-2.5 py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                            <option value="">Semua Prioritas</option>
-                            @foreach($criticalities as $crit)
-                                <option value="{{ $crit }}" {{ request('criticality') === $crit ? 'selected' : '' }}>{{ $critLabels[$crit] ?? ucfirst($crit) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Status Filter -->
-                    <div class="w-full lg:w-40">
-                        <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Status Mesin</label>
-                        <select name="operational_status" class="w-full px-2.5 py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                            <option value="">Semua Status</option>
-                            @foreach($operationalStatuses as $status)
-                                <option value="{{ $status }}" {{ request('operational_status') === $status ? 'selected' : '' }}>{{ $statusLabels[$status] ?? ucfirst($status) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex gap-1.5 self-stretch lg:self-auto">
-                        <button type="submit" class="bg-primary text-on-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg flex items-center justify-center shadow-sm" title="Terapkan Filter">
+                        <!-- Mobile: Filter toggle + Submit -->
+                        <button type="button" onclick="toggleMobileFilters()" class="lg:hidden shrink-0 w-11 h-11 flex items-center justify-center bg-surface-container border border-outline-variant rounded-lg text-on-surface-variant relative" title="Filter">
+                            <span class="material-symbols-outlined text-[22px]">tune</span>
+                            @if(request()->anyFilled(['department','category','criticality','operational_status']))
+                                <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span>
+                            @endif
+                        </button>
+                        <button type="submit" class="lg:hidden shrink-0 w-11 h-11 flex items-center justify-center bg-primary text-on-primary rounded-lg shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </button>
+                        <!-- Desktop: Submit + Reset -->
+                        <button type="submit" class="hidden lg:flex bg-primary text-on-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg items-center justify-center shadow-sm" title="Terapkan Filter">
                             <span class="material-symbols-outlined text-[20px]">filter_list</span>
                         </button>
-                        @if(request()->anyFilled(['search', 'department', 'category', 'criticality', 'operational_status']))
-                            <a href="{{ route('machines.index') }}" class="bg-surface-container border border-outline-variant hover:bg-surface-container-high px-3 py-1.5 rounded-lg flex items-center justify-center" title="Reset Filter">
+                        @if(request()->anyFilled(['search','department','category','criticality','operational_status']))
+                            <a href="{{ route('machines.index') }}" class="hidden lg:flex bg-surface-container border border-outline-variant hover:bg-surface-container-high px-3 py-1.5 rounded-lg items-center justify-center" title="Reset Filter">
                                 <span class="material-symbols-outlined text-[20px]">filter_list_off</span>
                             </a>
                         @endif
                     </div>
+
+                    <!-- Row 2: Dropdowns (always on desktop, collapsible on mobile) -->
+                    <div id="mobile-filter-panel" class="{{ request()->anyFilled(['department','category','criticality','operational_status']) ? '' : 'hidden' }} lg:block">
+                        <div class="flex flex-col lg:flex-row lg:items-end gap-2.5">
+                            <div class="w-full lg:w-44">
+                                <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Departemen</label>
+                                <select name="department" class="w-full px-2.5 py-2.5 lg:py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
+                                    <option value="">Semua Departemen</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept }}" {{ request('department') === $dept ? 'selected' : '' }}>{{ $dept }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="w-full lg:w-40">
+                                <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Kategori</label>
+                                <select name="category" class="w-full px-2.5 py-2.5 lg:py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="w-full lg:w-40">
+                                <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Prioritas</label>
+                                <select name="criticality" class="w-full px-2.5 py-2.5 lg:py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
+                                    <option value="">Semua Prioritas</option>
+                                    @foreach($criticalities as $crit)
+                                        <option value="{{ $crit }}" {{ request('criticality') === $crit ? 'selected' : '' }}>{{ $critLabels[$crit] ?? ucfirst($crit) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="w-full lg:w-40">
+                                <label class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Status Mesin</label>
+                                <select name="operational_status" class="w-full px-2.5 py-2.5 lg:py-1.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
+                                    <option value="">Semua Status</option>
+                                    @foreach($operationalStatuses as $status)
+                                        <option value="{{ $status }}" {{ request('operational_status') === $status ? 'selected' : '' }}>{{ $statusLabels[$status] ?? ucfirst($status) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Mobile: Terapkan + Reset inside panel -->
+                            <div class="flex gap-2 lg:hidden">
+                                <button type="submit" class="flex-1 h-11 bg-primary text-on-primary rounded-lg font-semibold text-sm flex items-center justify-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[18px]">filter_list</span> Terapkan
+                                </button>
+                                @if(request()->anyFilled(['search','department','category','criticality','operational_status']))
+                                    <a href="{{ route('machines.index') }}" class="h-11 px-4 bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center text-on-surface-variant">
+                                        <span class="material-symbols-outlined text-[18px]">close</span>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             
-            <!-- Dynamic Machine Table List -->
-            <div class="overflow-x-auto">
+            <!-- Dynamic Machine Table List (Desktop only) -->
+            <div class="hidden lg:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-surface-bright border-b border-outline-variant">
@@ -312,10 +326,64 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile Card List (lg:hidden) -->
+            <div class="lg:hidden divide-y divide-outline-variant">
+                @forelse($machines as $machine)
+                    @php
+                        $isMachineActive = $machine->lifecycle_status === 'ACTIVE';
+                        $cardPhoto = $machine->photos->first();
+                    @endphp
+                    <a href="{{ route('machines.show', $machine->code) }}"
+                       class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-container-low active:bg-surface-container transition-colors {{ !$isMachineActive ? 'opacity-60' : '' }}">
+                        <!-- Thumbnail -->
+                        <div class="w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-outline-variant bg-surface-container flex items-center justify-center">
+                            @if($cardPhoto && $cardPhoto->file_path)
+                                <img src="{{ asset($cardPhoto->file_path) }}" alt="{{ $machine->name }}" class="w-full h-full object-cover" loading="lazy">
+                            @else
+                                <span class="material-symbols-outlined text-[28px] text-outline">precision_manufacturing</span>
+                            @endif
+                        </div>
+                        <!-- Info -->
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-on-surface text-sm leading-tight truncate">{{ $machine->name }}</p>
+                            <p class="mono text-xs font-bold {{ $isMachineActive ? 'text-primary' : 'text-on-surface-variant' }} mt-0.5">{{ $machine->code }}</p>
+                            <p class="text-xs text-on-surface-variant truncate mt-0.5">{{ $machine->department }}@if($machine->production_area) &middot; {{ $machine->production_area }}@endif</p>
+                            <div class="flex flex-wrap gap-1 mt-1.5">
+                                <x-status-badge :type="!$isMachineActive ? 'low' : $machine->operational_status" :label="!$isMachineActive ? ($statusLabels[$machine->operational_status] ?? $machine->operational_status) : null" />
+                                <x-status-badge :type="!$isMachineActive ? 'low' : $machine->criticality" :label="!$isMachineActive ? ($critLabels[$machine->criticality] ?? $machine->criticality) : null" />
+                            </div>
+                        </div>
+                        <!-- Chevron -->
+                        <span class="material-symbols-outlined shrink-0 text-on-surface-variant text-[20px]">chevron_right</span>
+                    </a>
+                @empty
+                    <div class="px-6 py-12 text-center">
+                        <x-empty-state
+                            title="Mesin Tidak Ditemukan"
+                            description="Tidak ada mesin yang sesuai dengan pencarian atau filter Anda. Periksa kata kunci atau ubah filter pencarian."
+                            icon="precision_manufacturing"
+                        />
+                        @if(request()->anyFilled(['search','department','category','criticality','operational_status']))
+                            <a href="{{ route('machines.index') }}" class="mt-4 inline-flex items-center gap-2 text-primary font-semibold text-sm">
+                                <span class="material-symbols-outlined text-[18px]">filter_list_off</span> Reset Filter
+                            </a>
+                        @endif
+                    </div>
+                @endforelse
+            </div>
             <!-- Pagination Controls -->
             <div class="px-4 py-3 border-t border-outline-variant bg-surface-container-low">
                 {{ $machines->links() }}
             </div>
         </div>
     </div>
+@push('scripts')
+<script>
+function toggleMobileFilters() {
+    const panel = document.getElementById('mobile-filter-panel');
+    if (panel) panel.classList.toggle('hidden');
+}
+</script>
+@endpush
 </x-layouts.app>

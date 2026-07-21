@@ -122,6 +122,8 @@
 <body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
 
     @if ($sidebar ?? true)
+        <!-- Sidebar Drawer Overlay (mobile only) -->
+        <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden" onclick="closeMobileDrawer()"></div>
         <!-- Sidebar Navigation -->
         <x-sidebar />
     @endif
@@ -132,10 +134,42 @@
     @endif
 
     <!-- Content Area -->
-    <main class="{{ ($sidebar ?? true) ? 'ml-52' : '' }} {{ ($topbar ?? true) ? 'mt-16' : '' }} p-margin-desktop max-w-[1440px] mx-auto">
+    <main class="{{ ($sidebar ?? true) ? 'lg:ml-52' : '' }} {{ ($topbar ?? true) ? 'mt-16' : '' }} px-4 py-4 lg:p-margin-desktop max-w-[1440px] mx-auto">
         {{ $slot }}
     </main>
 
     @stack('scripts')
+
+    <script>
+        function openMobileDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            if (!drawer || !overlay) return;
+            drawer.classList.remove('-translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMobileDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            if (!drawer || !overlay) return;
+            drawer.classList.add('-translate-x-full');
+            overlay.classList.remove('opacity-100');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+        }
+        // Close drawer on navigation link tap (mobile)
+        document.addEventListener('DOMContentLoaded', function () {
+            const drawer = document.getElementById('mobile-drawer');
+            if (drawer) {
+                drawer.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', function () {
+                        if (window.innerWidth < 1024) closeMobileDrawer();
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
