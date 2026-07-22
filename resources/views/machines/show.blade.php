@@ -1,6 +1,5 @@
 @php
-    $overallPhoto = $machine->photos->first();
-    $photoUrl = ($overallPhoto && $overallPhoto->file_path) ? asset('storage/' . $overallPhoto->file_path) : null;
+    $photoUrl = $machine->primary_photo_url ?: null;
 @endphp
 
 <x-layouts.app 

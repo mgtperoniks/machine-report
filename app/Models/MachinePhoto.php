@@ -68,16 +68,20 @@ class MachinePhoto extends Model
             return '';
         }
 
+        if (str_starts_with($this->file_path, 'images/')) {
+            return asset($this->file_path);
+        }
+
         // Check if thumbnail exists under /thumbs/
         $dir = dirname($this->file_path);
         $filename = basename($this->file_path);
         $thumbRelPath = $dir . '/thumbs/' . $filename;
 
         if (Storage::disk('public')->exists($thumbRelPath)) {
-            return asset('storage/' . $thumbRelPath);
+            return Storage::disk('public')->url($thumbRelPath);
         }
 
-        return asset('storage/' . $this->file_path);
+        return Storage::disk('public')->url($this->file_path);
     }
 
     /**
@@ -85,7 +89,15 @@ class MachinePhoto extends Model
      */
     public function getFullUrlAttribute(): string
     {
-        return $this->file_path ? asset('storage/' . $this->file_path) : '';
+        if (!$this->file_path) {
+            return '';
+        }
+
+        if (str_starts_with($this->file_path, 'images/')) {
+            return asset($this->file_path);
+        }
+
+        return Storage::disk('public')->url($this->file_path);
     }
 
     /**

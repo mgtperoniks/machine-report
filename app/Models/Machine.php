@@ -80,6 +80,66 @@ class Machine extends Model
     }
 
     /**
+     * Get primary photo of the machine based on priority rules.
+     */
+    public function getPrimaryPhotoAttribute(): ?MachinePhoto
+    {
+        $photos = $this->photos;
+
+        if ($photos->isEmpty()) {
+            return null;
+        }
+
+        // 1. Priority 1: photo_type = 'reference'
+        $reference = $photos->first(fn($p) => ($p->photo_type ?? '') === 'reference');
+        if ($reference) {
+            return $reference;
+        }
+
+        // 2. Priority 2: Legacy photo (type = 'overall')
+        $overall = $photos->first(fn($p) => ($p->type ?? '') === 'overall');
+        if ($overall) {
+            return $overall;
+        }
+
+        // 3. Priority 3: First available photo
+        return $photos->first();
+    }
+
+    /**
+     * Get primary photo URL resolver.
+     */
+    public function getPrimaryPhotoUrlAttribute(): string
+    {
+        $photo = $this->primary_photo;
+        if (!$photo || !$photo->file_path) {
+            return '';
+        }
+
+        if (str_starts_with($photo->file_path, 'images/')) {
+            return asset($photo->file_path);
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($photo->file_path);
+    }
+
+    /**
+     * Helper method to get the primary photo instance.
+     */
+    public function primaryPhoto(): ?MachinePhoto
+    {
+        return $this->primary_photo;
+    }
+
+    /**
+     * Helper method to get the primary photo URL.
+     */
+    public function primaryPhotoUrl(): string
+    {
+        return $this->primary_photo_url;
+    }
+
+    /**
      * Get the production area.
      */
     public function productionArea(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -129,6 +189,9 @@ class Machine extends Model
      */
     public function getHasPhotoAttribute(): bool
     {
+        if ($this->relationLoaded('photos')) {
+            return $this->photos->contains(fn($p) => !empty($p->file_path));
+        }
         return $this->photos()->whereNotNull('file_path')->where('file_path', '!=', '')->exists();
     }
 

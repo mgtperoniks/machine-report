@@ -102,13 +102,12 @@
                 <!-- Machine & Nameplate Photos -->
                 <div class="flex flex-col sm:flex-row md:flex-col gap-3">
                     @php
-                        $overallPhoto = $plan->machine->photos->firstWhere('type', 'overall');
                         $nameplatePhoto = $plan->machine->photos->firstWhere('type', 'name_plate');
                     @endphp
                     
                     <div class="flex-1 bg-gray-50 rounded border border-gray-200 p-2 flex flex-col items-center justify-center min-h-[110px]">
-                        @if ($overallPhoto && Storage::disk('public')->exists($overallPhoto->file_path))
-                            <img src="{{ Storage::url($overallPhoto->file_path) }}" alt="Foto Mesin" class="max-h-24 object-contain rounded" />
+                        @if ($plan->machine->primary_photo_url)
+                            <img src="{{ $plan->machine->primary_photo_url }}" alt="Foto Mesin" class="max-h-24 object-contain rounded" />
                         @else
                             <div class="text-center text-gray-400 py-3">
                                 <span class="text-xs">Foto Mesin Tidak Tersedia</span>

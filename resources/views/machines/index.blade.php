@@ -205,11 +205,8 @@
                             <tr class="hover:bg-surface-container-low transition-colors border-b border-outline-variant @if(!$isMachineActive) opacity-60 text-slate-500 bg-surface-container-low/20 italic @endif">
                                 <!-- Machine Photo -->
                                 <td class="px-4 py-2.5">
-                                    @php
-                                        $primaryPhoto = $machine->photos->where('type', 'overall')->first();
-                                    @endphp
-                                    @if($primaryPhoto && $primaryPhoto->file_path)
-                                        <img src="{{ asset($primaryPhoto->file_path) }}" alt="{{ $machine->name }}" class="w-8 h-8 object-cover rounded border border-outline-variant shadow-sm"/>
+                                    @if($machine->primary_photo_url)
+                                        <img src="{{ $machine->primary_photo_url }}" alt="{{ $machine->name }}" class="w-8 h-8 object-cover rounded border border-outline-variant shadow-sm"/>
                                     @else
                                         <div class="w-8 h-8 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-on-surface-variant" title="Dokumen Belum Diunggah">
                                             <span class="material-symbols-outlined text-[16px]">image_not_supported</span>
@@ -332,14 +329,13 @@
                 @forelse($machines as $machine)
                     @php
                         $isMachineActive = $machine->lifecycle_status === 'ACTIVE';
-                        $cardPhoto = $machine->photos->first();
                     @endphp
                     <a href="{{ route('machines.show', $machine->code) }}"
                        class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-container-low active:bg-surface-container transition-colors {{ !$isMachineActive ? 'opacity-60' : '' }}">
                         <!-- Thumbnail -->
                         <div class="w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-outline-variant bg-surface-container flex items-center justify-center">
-                            @if($cardPhoto && $cardPhoto->file_path)
-                                <img src="{{ asset($cardPhoto->file_path) }}" alt="{{ $machine->name }}" class="w-full h-full object-cover" loading="lazy">
+                            @if($machine->primary_photo_url)
+                                <img src="{{ $machine->primary_photo_url }}" alt="{{ $machine->name }}" class="w-full h-full object-cover" loading="lazy">
                             @else
                                 <span class="material-symbols-outlined text-[28px] text-outline">precision_manufacturing</span>
                             @endif
