@@ -934,6 +934,10 @@
                         <span class="material-symbols-outlined text-[16px]">save</span> Simpan Perubahan
                     </button>
                 </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal Shared Machines Lookup -->
     <div id="modal-shared-machines" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden backdrop-blur-xs">
         <div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-2xl max-w-md w-full mx-4 shadow-2xl space-y-3">
