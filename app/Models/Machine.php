@@ -120,7 +120,7 @@ class Machine extends Model
             return asset($photo->file_path);
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($photo->file_path);
+        return asset('storage/' . $photo->file_path);
     }
 
     /**

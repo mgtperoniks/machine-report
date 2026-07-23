@@ -118,7 +118,7 @@
 
                     <div class="flex-1 bg-gray-50 rounded border border-gray-200 p-2 flex flex-col items-center justify-center min-h-[110px]">
                         @if ($nameplatePhoto && Storage::disk('public')->exists($nameplatePhoto->file_path))
-                            <img src="{{ Storage::url($nameplatePhoto->file_path) }}" alt="Papan Nama" class="max-h-24 object-contain rounded" />
+                            <img src="{{ asset('storage/' . $nameplatePhoto->file_path) }}" alt="Papan Nama" class="max-h-24 object-contain rounded" />
                         @else
                             <div class="text-center text-gray-400 py-3">
                                 <span class="text-xs">Papan Nama Tidak Tersedia</span>

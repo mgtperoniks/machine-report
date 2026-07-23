@@ -353,7 +353,7 @@
                         $genPhoto = $plan->execution->photos->firstWhere('type', 'general');
                     @endphp
                     @if($genPhoto && Storage::disk('public')->exists($genPhoto->photo_path))
-                        <img src="{{ Storage::url($genPhoto->photo_path) }}" alt="Foto Eksekusi" class="max-h-32 object-contain rounded shadow" />
+                        <img src="{{ asset('storage/' . $genPhoto->photo_path) }}" alt="Foto Eksekusi" class="max-h-32 object-contain rounded shadow" />
                     @else
                         <div class="text-center text-slate-400 py-3">
                             <span class="material-symbols-outlined text-[36px] opacity-40">broken_image</span>

@@ -78,10 +78,10 @@ class MachinePhoto extends Model
         $thumbRelPath = $dir . '/thumbs/' . $filename;
 
         if (Storage::disk('public')->exists($thumbRelPath)) {
-            return Storage::disk('public')->url($thumbRelPath);
+            return asset('storage/' . $thumbRelPath);
         }
 
-        return Storage::disk('public')->url($this->file_path);
+        return asset('storage/' . $this->file_path);
     }
 
     /**
@@ -97,7 +97,7 @@ class MachinePhoto extends Model
             return asset($this->file_path);
         }
 
-        return Storage::disk('public')->url($this->file_path);
+        return asset('storage/' . $this->file_path);
     }
 
     /**

@@ -5,8 +5,6 @@
 <x-layouts.app 
     title="Paspor Mesin - {{ $machine->code }} | Sistem MRM"
     topbar-title="Manajemen Keandalan Mesin"
-    :subnav="['Ikhtisar' => '#', 'Riwayat Medis' => route('machines.show', $machine->code), 'Sparepart' => '#', 'Dokumen' => '#']"
-    active-subnav="Riwayat Medis"
 >
     <!-- Breadcrumbs -->
     <x-breadcrumb :items="['Daftar Mesin' => route('machines.index'), $machine->code => '']" />
