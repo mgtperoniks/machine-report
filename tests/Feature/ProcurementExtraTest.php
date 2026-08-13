@@ -70,6 +70,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'normal',
             'target_needed_date' => now()->addDays(7)->toDateString(),
             'machine_down' => 0,
+            'sourcing_type' => 'local',
             'description' => 'Detailed description of mechanical damage',
             'reason' => 'Critical spare part depletion',
         ];
@@ -119,6 +120,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'normal',
             'target_needed_date' => now()->addDays(7)->toDateString(),
             'machine_down' => 1,
+            'sourcing_type' => 'local',
             'description' => 'New damage',
             'reason' => 'New reason',
         ];
@@ -162,6 +164,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'urgent',
             'target_needed_date' => now()->addDays(10)->toDateString(),
             'machine_down' => 1,
+            'sourcing_type' => 'local',
             'description' => 'Updated description text',
             'reason' => 'Updated reason text',
         ];
@@ -321,6 +324,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'normal',
             'target_needed_date' => now()->addDays(7)->toDateString(),
             'machine_down' => 0,
+            'sourcing_type' => 'local',
             'description' => 'New description details',
             'reason' => 'New reason details',
         ];
@@ -349,6 +353,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'urgent',
             'target_needed_date' => now()->addDays(7)->toDateString(),
             'machine_down' => 1,
+            'sourcing_type' => 'local',
             'description' => 'Detailed damage specifications',
             'reason' => 'Emergency purchase',
             'action' => 'submit', // even if action=submit is passed, it must not auto-submit
@@ -424,6 +429,7 @@ class ProcurementExtraTest extends TestCase
             'urgency' => 'urgent',
             'target_needed_date' => now()->addDays(5)->toDateString(),
             'machine_down' => 0,
+            'sourcing_type' => 'local',
             'description' => 'Hacked desc',
             'reason' => 'Hacked reason',
         ]);

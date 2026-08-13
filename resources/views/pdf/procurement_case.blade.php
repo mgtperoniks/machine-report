@@ -75,19 +75,19 @@
             text-align: center;
         }
         .stamp-approved {
-            border: 2px dashed #16a34a;
-            color: #16a34a;
-            background-color: #f0fdf4;
+            border: 1px solid #475569;
+            color: #0f172a;
+            background-color: #f1f5f9;
         }
         .stamp-pending {
-            border: 2px dashed #94a3b8;
-            color: #94a3b8;
-            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            color: #64748b;
+            background-color: #ffffff;
         }
         .stamp-rejected {
-            border: 2px dashed #dc2626;
-            color: #dc2626;
-            background-color: #fef2f2;
+            border: 1px solid #94a3b8;
+            color: #334155;
+            background-color: #f1f5f9;
         }
         
         .sig-meta {
@@ -201,7 +201,21 @@
             <td class="bg-gray" style="width: 20%;"><span class="summary-label">Operational Impact</span></td>
             <td style="width: 30%;">
                 <span class="summary-value @if($case->machine_down) text-red @else text-green @endif">
-                    {{ $case->machine_down ? '🔴 MACHINE DOWN / DOWNTIME' : '🟢 RUNNING / NON-DOWNTIME' }}
+                    {{ $case->machine_down ? 'MACHINE DOWN / DOWNTIME' : 'RUNNING / NON-DOWNTIME' }}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-gray"><span class="summary-label">Procurement Type</span></td>
+            <td colspan="3">
+                <span class="summary-value font-mono" style="font-weight: bold;">
+                    @if($case->sourcing_type === 'import')
+                        IMPORT
+                    @elseif($case->sourcing_type === 'local')
+                        LOCAL
+                    @else
+                        -
+                    @endif
                 </span>
             </td>
         </tr>
@@ -352,51 +366,8 @@
         </tr>
     </table>
 
-    <!-- Section 5: Purchasing & Logistics Panel -->
-    <div class="section-header">5. Purchasing & Logistics Panel</div>
-    <table class="summary-table">
-        <tr>
-            <td class="bg-gray" style="width: 20%;"><span class="summary-label">Vendor Name</span></td>
-            <td style="width: 30%;"><span class="summary-value">{{ $case->vendor_name ?? '-' }}</span></td>
-            <td class="bg-gray" style="width: 20%;"><span class="summary-label">Quotation Ref</span></td>
-            <td style="width: 30%;"><span class="summary-value">-</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">PO Number</span></td>
-            <td><span class="summary-value font-mono">{{ $case->po_number ?? '-' }}</span></td>
-            <td class="bg-gray"><span class="summary-label">PO Date</span></td>
-            <td><span class="summary-value font-mono">{{ $case->po_date ? $case->po_date->format('d M Y') : '-' }}</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">Expected Arrival</span></td>
-            <td><span class="summary-value">-</span></td>
-            <td class="bg-gray"><span class="summary-label">Actual Arrival</span></td>
-            <td><span class="summary-value font-mono">{{ $case->rack_location ? 'Confirmed' : '-' }}</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">Receiving Status</span></td>
-            <td>
-                <span class="summary-value font-mono">
-                    @if($case->rack_location)
-                        RECEIVED / STORED
-                    @elseif($case->po_number)
-                        WAITING FOR DELIVERY
-                    @else
-                        PENDING ORDER
-                    @endif
-                </span>
-            </td>
-            <td class="bg-gray"><span class="summary-label">Rack Location</span></td>
-            <td><span class="summary-value font-mono text-blue">{{ $case->rack_location ?? '-' }}</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">Purchasing Notes</span></td>
-            <td colspan="3"><span class="summary-value" style="font-weight: normal;">-</span></td>
-        </tr>
-    </table>
-
-    <!-- Section 6: Digital Approval Signatures -->
-    <div class="section-header">6. Digital Authorization Signatures</div>
+    <!-- Section 5: Digital Approval Signatures -->
+    <div class="section-header">5. Digital Authorization Signatures</div>
     <table class="sig-table">
         <tr>
             {{-- Admin Maintenance Signature --}}
@@ -428,7 +399,7 @@
                         Date: {{ $approvals['kabag']['date'] }}<br/>
                         IP: {{ $approvals['kabag']['ip'] }}
                         @if(isset($approvals['kabag']['note']))
-                            <br/><span style="font-style: italic; color: #b91c1c;">"{{ $approvals['kabag']['note'] }}"</span>
+                            <br/><span style="font-style: italic; color: #475569;">"{{ $approvals['kabag']['note'] }}"</span>
                         @endif
                     </div>
                 @else
@@ -441,18 +412,39 @@
                 <div class="sig-title">Director</div>
                 @if($approvals['director'])
                     @if($approvals['director']['status'] === 'approved')
-                        <div class="sig-stamp stamp-approved">DIGITAL APPROVED</div>
+                        @php
+                            $directorQrUrl = route('procurements.show', $case->id);
+                            $qrOptions = new \chillerlan\QRCode\QROptions([
+                                'outputBase64' => true,
+                                'scale' => 2,
+                                'eccLevel' => \chillerlan\QRCode\Common\EccLevel::L,
+                            ]);
+                            $directorQrCode = (new \chillerlan\QRCode\QRCode($qrOptions))->render($directorQrUrl);
+                        @endphp
+                        <div style="margin: 4px auto; text-align: center;">
+                            <img src="{{ $directorQrCode }}" style="width: 55px; height: 55px; display: block; margin: 0 auto;" alt="Verify" />
+                            <div style="font-size: 5.5pt; font-weight: bold; color: #475569; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">SCAN TO VERIFY</div>
+                        </div>
+                        <div style="font-size: 7pt; font-weight: bold; color: #1f2937; margin-top: 4px;">{{ $approvals['director']['name'] }}</div>
+                        <div class="sig-meta">
+                            Status: <span style="font-weight: bold; color: #0f172a;">APPROVED</span><br/>
+                            Date: {{ $approvals['director']['date'] }}<br/>
+                            IP: {{ $approvals['director']['ip'] }}
+                            @if(isset($approvals['director']['note']))
+                                <br/><span style="font-style: italic; color: #475569;">"{{ $approvals['director']['note'] }}"</span>
+                            @endif
+                        </div>
                     @else
                         <div class="sig-stamp stamp-rejected">REJECTED</div>
+                        <div style="font-size: 7pt; font-weight: bold; color: #1f2937;">{{ $approvals['director']['name'] }}</div>
+                        <div class="sig-meta">
+                            Date: {{ $approvals['director']['date'] }}<br/>
+                            IP: {{ $approvals['director']['ip'] }}
+                            @if(isset($approvals['director']['note']))
+                                <br/><span style="font-style: italic; color: #475569;">"{{ $approvals['director']['note'] }}"</span>
+                            @endif
+                        </div>
                     @endif
-                    <div style="font-size: 7pt; font-weight: bold; color: #1f2937;">{{ $approvals['director']['name'] }}</div>
-                    <div class="sig-meta">
-                        Date: {{ $approvals['director']['date'] }}<br/>
-                        IP: {{ $approvals['director']['ip'] }}
-                        @if(isset($approvals['director']['note']))
-                            <br/><span style="font-style: italic; color: #b91c1c;">"{{ $approvals['director']['note'] }}"</span>
-                        @endif
-                    </div>
                 @else
                     <div class="sig-stamp stamp-pending">PENDING</div>
                 @endif

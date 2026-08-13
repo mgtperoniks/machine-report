@@ -46,15 +46,7 @@
                     <label for="machine_id" class="block text-label-md font-label-md text-on-surface font-semibold mb-2">
                         Mesin Terkait <span class="text-error">*</span>
                     </label>
-                    <select name="machine_id" id="machine_id" required
-                            class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                        <option value="">-- Pilih Mesin --</option>
-                        @foreach($machines as $machine)
-                            <option value="{{ $machine->id }}" {{ old('machine_id', $procurement->machine_id) == $machine->id ? 'selected' : '' }}>
-                                {{ $machine->name }} ({{ $machine->code }})
-                            </option>
-                        @endforeach
-                    </select>
+                    <x-machine-autocomplete name="machine_id" id="machine_id" :selected="old('machine_id', $procurement->machine_id)" required />
                 </div>
 
                 <!-- Category -->
@@ -96,13 +88,32 @@
                 </div>
 
                 <!-- Machine Down Checkbox -->
-                <div class="col-span-2 flex items-center gap-3 py-2">
+                <div class="col-span-2 flex items-center gap-3 py-1">
                     <input type="hidden" name="machine_down" value="0">
                     <input type="checkbox" name="machine_down" id="machine_down" value="1" {{ old('machine_down', $procurement->machine_down) ? 'checked' : '' }}
                            class="w-5 h-5 text-error bg-surface-container border border-outline-variant rounded focus:ring-error focus:ring-2"/>
                     <label for="machine_down" class="text-sm font-semibold text-on-surface cursor-pointer select-none">
                         Apakah Mesin Mengalami Breakdown (Machine Down)?
                     </label>
+                </div>
+
+                <!-- Sourcing Type (Jenis Pengadaan) -->
+                <div class="col-span-2">
+                    <label class="block text-label-md font-label-md text-on-surface font-semibold mb-2">
+                        Jenis Pengadaan <span class="text-error">*</span>
+                    </label>
+                    <div class="flex items-center gap-6 mt-1">
+                        <label class="flex items-center gap-2 text-sm font-medium text-on-surface cursor-pointer select-none">
+                            <input type="radio" name="sourcing_type" value="local" {{ old('sourcing_type', $procurement->sourcing_type) !== 'import' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-primary bg-surface-container border border-outline-variant focus:ring-primary focus:ring-2"/>
+                            Lokal
+                        </label>
+                        <label class="flex items-center gap-2 text-sm font-medium text-on-surface cursor-pointer select-none">
+                            <input type="radio" name="sourcing_type" value="import" {{ old('sourcing_type', $procurement->sourcing_type) === 'import' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-primary bg-surface-container border border-outline-variant focus:ring-primary focus:ring-2"/>
+                            Impor
+                        </label>
+                    </div>
                 </div>
             </div>
 

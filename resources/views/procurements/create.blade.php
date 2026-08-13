@@ -45,19 +45,7 @@
                     <label for="machine_id" class="block text-label-md font-label-md text-on-surface font-semibold mb-2">
                         Mesin Terkait <span class="text-error">*</span>
                     </label>
-                    <select name="machine_id" id="machine_id" required
-                            class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary font-body-md text-sm">
-                        <option value="">-- Pilih Mesin --</option>
-                        @foreach($machines as $machine)
-                            <option value="{{ $machine->id }}"
-                                    data-code="{{ $machine->code }}"
-                                    data-name="{{ $machine->name }}"
-                                    data-area="{{ $machine->production_area ?? ($machine->productionArea->name ?? '') }}"
-                                    {{ old('machine_id') == $machine->id ? 'selected' : '' }}>
-                                {{ $machine->code }} — {{ $machine->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <x-machine-autocomplete name="machine_id" id="machine_id" :selected="old('machine_id')" required />
                 </div>
 
                 <!-- Category -->
@@ -99,13 +87,32 @@
                 </div>
 
                 <!-- Machine Down Checkbox -->
-                <div class="col-span-2 flex items-center gap-3 py-2">
+                <div class="col-span-2 flex items-center gap-3 py-1">
                     <input type="hidden" name="machine_down" value="0">
                     <input type="checkbox" name="machine_down" id="machine_down" value="1" {{ old('machine_down') == '1' ? 'checked' : '' }}
                            class="w-5 h-5 text-error bg-surface-container border border-outline-variant rounded focus:ring-error focus:ring-2"/>
                     <label for="machine_down" class="text-sm font-semibold text-on-surface cursor-pointer select-none">
                         Apakah Mesin Mengalami Breakdown (Machine Down)?
                     </label>
+                </div>
+
+                <!-- Sourcing Type (Jenis Pengadaan) -->
+                <div class="col-span-2">
+                    <label class="block text-label-md font-label-md text-on-surface font-semibold mb-2">
+                        Jenis Pengadaan <span class="text-error">*</span>
+                    </label>
+                    <div class="flex items-center gap-6 mt-1">
+                        <label class="flex items-center gap-2 text-sm font-medium text-on-surface cursor-pointer select-none">
+                            <input type="radio" name="sourcing_type" value="local" {{ old('sourcing_type') !== 'import' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-primary bg-surface-container border border-outline-variant focus:ring-primary focus:ring-2"/>
+                            Lokal
+                        </label>
+                        <label class="flex items-center gap-2 text-sm font-medium text-on-surface cursor-pointer select-none">
+                            <input type="radio" name="sourcing_type" value="import" {{ old('sourcing_type') === 'import' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-primary bg-surface-container border border-outline-variant focus:ring-primary focus:ring-2"/>
+                            Impor
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -263,78 +270,4 @@
         }
     }
     </script>
-
-    @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-        <style>
-            /* Tom Select custom styling overrides to match Tailwind / Geist theme */
-            .ts-wrapper .ts-control {
-                width: 100% !important;
-                padding: 10px 16px !important;
-                background-color: var(--color-surface-container, #eceef0) !important;
-                border: 1px solid var(--color-outline-variant, #c4c5d5) !important;
-                border-radius: 8px !important;
-                font-family: 'Geist', sans-serif !important;
-                font-size: 0.875rem !important;
-                color: var(--color-on-surface, #191c1e) !important;
-                box-shadow: none !important;
-                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
-            }
-            .ts-wrapper.focus .ts-control {
-                border-color: #00288e !important;
-                outline: 0 !important;
-                box-shadow: 0 0 0 2px rgba(0, 40, 142, 0.2) !important;
-            }
-            .ts-wrapper .ts-control input {
-                font-family: 'Geist', sans-serif !important;
-                font-size: 0.875rem !important;
-                color: var(--color-on-surface, #191c1e) !important;
-            }
-            .ts-dropdown {
-                background-color: #ffffff !important;
-                border: 1px solid #c4c5d5 !important;
-                border-radius: 8px !important;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-                z-index: 50 !important;
-                font-family: 'Geist', sans-serif !important;
-                font-size: 0.875rem !important;
-                margin-top: 4px !important;
-            }
-            .ts-dropdown .option {
-                padding: 8px 16px !important;
-                color: #191c1e !important;
-            }
-            .ts-dropdown .active {
-                background-color: #dde1ff !important;
-                color: #001453 !important;
-            }
-            .ts-dropdown .no-results {
-                padding: 8px 16px !important;
-                color: #444653 !important;
-                font-style: italic !important;
-            }
-        </style>
-    @endpush
-
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const selectEl = document.getElementById('machine_id');
-                const ts = new TomSelect(selectEl, {
-                    create: false,
-                    searchField: ['value', 'text', 'code', 'name', 'area'],
-                    dataAttr: 'data-*',
-                    render: {
-                        no_results: function(data, escape) {
-                            return '<div class="no-results">No machine found</div>';
-                        }
-                    }
-                });
-                if (selectEl.hasAttribute('autofocus')) {
-                    ts.focus();
-                }
-            });
-        </script>
-    @endpush
 </x-layouts.app>

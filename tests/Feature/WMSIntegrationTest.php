@@ -69,4 +69,27 @@ class WMSIntegrationTest extends TestCase
         $this->assertArrayHasKey('status', $viewData[0]);
         $this->assertArrayHasKey('shared_count', $viewData[0]);
     }
+
+    public function test_spareparts_index_page_displays_last_audit(): void
+    {
+        $this->seed();
+        
+        $user = \App\Models\User::factory()->create();
+        $user->givePermissionTo('sparepart.view');
+
+        $response = $this->actingAs($user)->get(route('spareparts.index'));
+        $response->assertStatus(200);
+
+        // Verify that the mock audited dates and age strings are visible on the page
+        $recentAuditDate = \Carbon\Carbon::now()->subDays(7)->format('d M Y');
+        $olderAuditDate = \Carbon\Carbon::now()->subDays(80)->format('d M Y');
+
+        $response->assertSee($recentAuditDate);
+        $response->assertSee('7 days ago');
+        
+        $response->assertSee($olderAuditDate);
+        $response->assertSee('80 days ago');
+        
+        $response->assertSee('Never');
+    }
 }

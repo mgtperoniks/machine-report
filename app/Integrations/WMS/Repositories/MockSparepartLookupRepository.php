@@ -144,6 +144,14 @@ class MockSparepartLookupRepository implements SparepartLookupRepositoryInterfac
             $normalized = strtoupper(trim($code));
             if (isset($this->mockWarehouse[$normalized])) {
                 $item = $this->mockWarehouse[$normalized];
+                
+                $lastAuditAt = null;
+                if ($normalized === 'BRG-6204') {
+                    $lastAuditAt = \Carbon\Carbon::now()->subDays(7)->toDateTimeString();
+                } elseif ($normalized === 'SEAL-TC-40') {
+                    $lastAuditAt = \Carbon\Carbon::now()->subDays(80)->toDateTimeString();
+                }
+
                 $result[$normalized] = SparepartItemDTO::fromRecord(
                     erpCode: $normalized,
                     variantId: $item['variant_id'],
@@ -160,7 +168,8 @@ class MockSparepartLookupRepository implements SparepartLookupRepositoryInterfac
                     monthlyAverage: $item['monthly_average'] ?? null,
                     sixMonthAverage: $item['six_month_average'] ?? null,
                     trend: $item['trend'] ?? null,
-                    leadTimeDays: $item['lead_time_days'] ?? 10
+                    leadTimeDays: $item['lead_time_days'] ?? 10,
+                    lastAuditAt: $lastAuditAt
                 );
             } else {
                 $result[$normalized] = SparepartItemDTO::offlineFallback($normalized, isOffline: false);

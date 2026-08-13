@@ -188,6 +188,7 @@ class ProcurementCaseController extends Controller
             'urgency'                   => 'required|string|in:normal,urgent,emergency',
             'target_needed_date'        => 'required|date',
             'machine_down'              => 'required|boolean',
+            'sourcing_type'             => 'required|string|in:local,import',
             'description'               => 'required|string',
             'reason'                    => 'required|string',
             // Optional attachments on create
@@ -277,6 +278,7 @@ class ProcurementCaseController extends Controller
             'urgency' => 'required|string|in:normal,urgent,emergency',
             'target_needed_date' => 'required|date',
             'machine_down' => 'required|boolean',
+            'sourcing_type' => 'required|string|in:local,import',
             'description' => 'required|string',
             'reason' => 'required|string',
         ]);

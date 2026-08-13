@@ -174,6 +174,7 @@ class ProcurementWorkflowTest extends TestCase
             'urgency' => 'urgent',
             'target_needed_date' => now()->addDays(3)->toDateString(),
             'machine_down' => 1,
+            'sourcing_type' => 'local',
             'description' => 'Detailed description update.',
             'reason' => 'For conveyor repair',
         ]);

@@ -103,6 +103,7 @@ class SparepartIntegrationController extends Controller
                 'criticality' => $criticalityVal,
                 'status' => $statusInfo,
                 'machines' => $machineMappings->map(fn($m) => $m->machine)->filter(),
+                'last_audit_at' => $dto->lastAuditAt,
             ];
         }
 

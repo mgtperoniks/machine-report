@@ -26,6 +26,7 @@ class ProcurementCase extends Model
         'reason',
         'target_needed_date',
         'machine_down',
+        'sourcing_type',
         'vendor_name',
         'po_number',
         'po_date',

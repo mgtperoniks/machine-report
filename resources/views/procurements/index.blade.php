@@ -402,19 +402,30 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold border
-                                        {{ $case->status->value === 'draft' ? 'bg-surface-container-high text-on-surface-variant border-outline' : '' }}
-                                        {{ $case->status->value === 'pending_kabag' ? 'bg-amber-100 text-amber-800 border-amber-400' : '' }}
-                                        {{ $case->status->value === 'pending_dir' ? 'bg-purple-100 text-purple-800 border-purple-400' : '' }}
-                                        {{ $case->status->value === 'processing' ? 'bg-blue-100 text-blue-800 border-blue-400' : '' }}
-                                        {{ $case->status->value === 'need_info' ? 'bg-red-100 text-red-800 border-red-400' : '' }}
-                                        {{ $case->status->value === 'waiting_delivery' ? 'bg-indigo-100 text-indigo-800 border-indigo-400' : '' }}
-                                        {{ $case->status->value === 'ready_to_pickup' ? 'bg-green-100 text-green-800 border-green-400' : '' }}
-                                        {{ $case->status->value === 'closed' ? 'bg-green-600 text-white border-green-700' : '' }}
-                                        {{ $case->status->value === 'cancelled' ? 'bg-gray-100 text-gray-800 border-gray-400 line-through' : '' }}
-                                    ">
-                                        {{ str_replace('_', ' ', strtoupper($case->status->value)) }}
-                                    </span>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold border
+                                            {{ $case->status->value === 'draft' ? 'bg-surface-container-high text-on-surface-variant border-outline' : '' }}
+                                            {{ $case->status->value === 'pending_kabag' ? 'bg-amber-100 text-amber-800 border-amber-400' : '' }}
+                                            {{ $case->status->value === 'pending_dir' ? 'bg-purple-100 text-purple-800 border-purple-400' : '' }}
+                                            {{ $case->status->value === 'processing' ? 'bg-blue-100 text-blue-800 border-blue-400' : '' }}
+                                            {{ $case->status->value === 'need_info' ? 'bg-red-100 text-red-800 border-red-400' : '' }}
+                                            {{ $case->status->value === 'waiting_delivery' ? 'bg-indigo-100 text-indigo-800 border-indigo-400' : '' }}
+                                            {{ $case->status->value === 'ready_to_pickup' ? 'bg-green-100 text-green-800 border-green-400' : '' }}
+                                            {{ $case->status->value === 'closed' ? 'bg-green-600 text-white border-green-700' : '' }}
+                                            {{ $case->status->value === 'cancelled' ? 'bg-gray-100 text-gray-800 border-gray-400 line-through' : '' }}
+                                        ">
+                                            {{ str_replace('_', ' ', strtoupper($case->status->value)) }}
+                                        </span>
+                                        @if($case->sourcing_type === 'import')
+                                            <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold uppercase tracking-wider">
+                                                IMPOR
+                                            </span>
+                                        @elseif($case->sourcing_type === 'local')
+                                            <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold uppercase tracking-wider">
+                                                LOKAL
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 font-semibold text-xs">{{ $case->target_needed_date->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-xs opacity-75">{{ $case->created_at->format('d M Y') }}</td>
@@ -474,6 +485,15 @@
                     <div class="flex items-center justify-between px-4 pt-4 pb-2">
                         <span class="font-mono font-bold text-primary text-sm tracking-wide">{{ $case->case_number }}</span>
                         <div class="flex items-center gap-1.5">
+                            @if($case->sourcing_type === 'import')
+                                <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[9px] font-bold uppercase tracking-wider">
+                                    IMPOR
+                                </span>
+                            @elseif($case->sourcing_type === 'local')
+                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-bold uppercase tracking-wider">
+                                    LOKAL
+                                </span>
+                            @endif
                             <span class="px-2 py-0.5 rounded-full text-[11px] font-bold {{ $urgencyClass }} {{ $isEmergency ? 'animate-pulse' : '' }}">
                                 {{ strtoupper($case->urgency->value) }}
                             </span>

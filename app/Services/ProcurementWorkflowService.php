@@ -45,6 +45,7 @@ class ProcurementWorkflowService
             'reason' => $data['reason'] ?? null,
             'target_needed_date' => $data['target_needed_date'],
             'machine_down' => filter_var($data['machine_down'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'sourcing_type' => $data['sourcing_type'] ?? null,
             'created_by' => $creator->id,
         ]);
     }
@@ -67,6 +68,7 @@ class ProcurementWorkflowService
             'reason' => $data['reason'] ?? $case->reason,
             'target_needed_date' => $data['target_needed_date'],
             'machine_down' => isset($data['machine_down']) ? filter_var($data['machine_down'], FILTER_VALIDATE_BOOLEAN) : $case->machine_down,
+            'sourcing_type' => $data['sourcing_type'] ?? $case->sourcing_type,
         ]);
 
         return $case;

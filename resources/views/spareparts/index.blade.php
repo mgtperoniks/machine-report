@@ -137,7 +137,7 @@
                             <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider w-[90px] text-center">Min Stock</th>
                             <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider w-[90px] text-center">Target</th>
                             <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider w-[90px] text-center">Coverage</th>
-                            <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider w-[90px] text-center">Criticality</th>
+                            <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider w-[120px] text-center">Last Audit</th>
                             <th class="px-3 py-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider text-right w-[80px]">Action</th>
                         </tr>
                     </thead>
@@ -201,18 +201,34 @@
                                     <span class="text-xs text-primary font-bold">{{ $item['coverage'] }} Mesin</span>
                                 </td>
 
-                                <!-- Criticality -->
+                                 <!-- Last Audit -->
                                 <td class="px-3 py-1.5 text-center whitespace-nowrap">
-                                    @php
-                                        $critColor = match($item['criticality']) {
-                                            'A' => 'bg-red-50 text-red-700 border-red-200 font-extrabold',
-                                            'B' => 'bg-amber-50 text-amber-750 border-amber-200 font-bold',
-                                            default => 'bg-gray-50 text-gray-700 border-gray-200 font-medium'
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] border uppercase {{ $critColor }}">
-                                        Kelas {{ $item['criticality'] }}
-                                    </span>
+                                    @if($item['last_audit_at'])
+                                        @php
+                                            $lastAuditDate = \Carbon\Carbon::parse($item['last_audit_at']);
+                                            $formattedDate = $lastAuditDate->format('d M Y');
+                                            $daysAgo = (int)$lastAuditDate->diffInDays(\Carbon\Carbon::now());
+                                            $ageStr = $daysAgo === 0 ? 'today' : ($daysAgo === 1 ? 'yesterday' : $daysAgo . ' days ago');
+                                            
+                                            if ($daysAgo <= 30) {
+                                                $badgeClass = 'bg-green-50 text-green-700 border-green-200 font-bold';
+                                            } elseif ($daysAgo <= 90) {
+                                                $badgeClass = 'bg-amber-50 text-amber-800 border-amber-200 font-medium';
+                                            } else {
+                                                $badgeClass = 'bg-gray-50 text-gray-600 border-gray-200 font-normal';
+                                            }
+                                        @endphp
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-xs font-bold text-on-surface">{{ $formattedDate }}</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] border mt-1 {{ $badgeClass }}">
+                                                {{ $ageStr }}
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] border bg-gray-50 text-gray-500 border-gray-200 font-medium">
+                                            Never
+                                        </span>
+                                    @endif
                                 </td>
 
                                 <!-- Action -->
@@ -254,6 +270,20 @@
                             <div>
                                 <span class="text-on-surface-variant">Coverage:</span>
                                 <span class="font-bold text-primary ml-1">{{ $item['coverage'] }} Mesin</span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-on-surface-variant">Last Audit:</span>
+                                @if($item['last_audit_at'])
+                                    @php
+                                        $lastAuditDate = \Carbon\Carbon::parse($item['last_audit_at']);
+                                        $formattedDate = $lastAuditDate->format('d M Y');
+                                        $daysAgo = (int)$lastAuditDate->diffInDays(\Carbon\Carbon::now());
+                                        $ageStr = $daysAgo === 0 ? 'today' : ($daysAgo === 1 ? 'yesterday' : $daysAgo . ' days ago');
+                                    @endphp
+                                    <span class="font-bold text-on-surface ml-1">{{ $formattedDate }} ({{ $ageStr }})</span>
+                                @else
+                                    <span class="font-bold text-on-surface-variant ml-1">Never</span>
+                                @endif
                             </div>
                         </div>
 

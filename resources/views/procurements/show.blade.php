@@ -121,6 +121,18 @@
                             @endif
                         </p>
                     </div>
+                    <div>
+                        <p class="text-xs text-on-surface-variant font-medium">Jenis Pengadaan</p>
+                        <p class="font-semibold text-lg mt-0.5">
+                            @if($procurement->sourcing_type === 'import')
+                                Impor
+                            @elseif($procurement->sourcing_type === 'local')
+                                Lokal
+                            @else
+                                -
+                            @endif
+                        </p>
+                    </div>
                     <div class="col-span-2 mt-2">
                         <p class="text-xs text-on-surface-variant font-medium mb-1">Deskripsi Kerusakan & Kebutuhan Spesifikasi</p>
                         <div class="bg-surface-container p-4 rounded-lg text-body-md text-sm whitespace-pre-line leading-relaxed border border-outline-variant">

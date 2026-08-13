@@ -141,17 +141,20 @@
                         <span class="font-bold text-primary">{{ $mappings->count() }} Mesin</span>
                     </div>
 
-                    <!-- Criticality -->
+                    <!-- Last Audit -->
                     <div class="flex justify-between items-center py-1 border-b border-outline-variant border-dashed">
-                        <span class="text-on-surface-variant font-medium">Criticality</span>
-                        @php
-                            $critLabel = match($criticalityVal) {
-                                'A' => 'Kelas A',
-                                'B' => 'Kelas B',
-                                default => 'Kelas C'
-                            };
-                        @endphp
-                        <span class="font-bold text-on-surface uppercase">{{ $critLabel }}</span>
+                        <span class="text-on-surface-variant font-medium">Last Audit</span>
+                        @if($dto->lastAuditAt)
+                            @php
+                                $lastAuditDate = \Carbon\Carbon::parse($dto->lastAuditAt);
+                                $formattedDate = $lastAuditDate->format('d M Y');
+                                $daysAgo = (int)$lastAuditDate->diffInDays(\Carbon\Carbon::now());
+                                $ageStr = $daysAgo === 0 ? 'today' : ($daysAgo === 1 ? 'yesterday' : $daysAgo . ' days ago');
+                            @endphp
+                            <span class="font-bold text-on-surface">{{ $formattedDate }} ({{ $ageStr }})</span>
+                        @else
+                            <span class="font-bold text-on-surface-variant">Never</span>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -113,8 +113,81 @@
     <div class="section-title">4. Maintenance Action Performed</div>
     <table style="border: 1px solid #d1d5db; background-color: #f9fafb; margin-bottom: 4px;">
         <tr>
-            <td style="padding: 4px; font-size: 7.5pt; color: #374151; font-style: italic;">
-                "{{ $corrective_actions }}"
+            <td style="padding: 4px; font-size: 7.5pt; color: #374151;">
+                @php
+                    $correctiveNotes = $corrective_actions;
+                    $hasReportJson = false;
+                    $parsedReport = null;
+
+                    // Extract the JSON object from the REPORT payload even if there are spaces/newlines
+                    if (preg_match('/\[REPORT:\s*({.*?})\s*\]/s', $correctiveNotes, $matches)) {
+                        $jsonStr = $matches[1];
+                        $parsedReport = json_decode($jsonStr, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $hasReportJson = true;
+                        }
+                    }
+                @endphp
+
+                @if($hasReportJson)
+                    <table style="width: 100%; border: none; margin: 0; padding: 0; font-size: 7.5pt; line-height: 1.4;">
+                        <tr style="border: none;">
+                            <td style="width: 25%; font-weight: bold; border: none; padding: 1px 0; color: #4b5563;">Tipe Perbaikan:</td>
+                            <td style="border: none; padding: 1px 0;">
+                                @php
+                                    $repairType = $parsedReport['repair_type'] ?? '';
+                                    if (strtolower($repairType) === 'permanent') {
+                                        $repairType = 'Permanen';
+                                    } elseif (strtolower($repairType) === 'temporary') {
+                                        $repairType = 'Sementara';
+                                    }
+                                @endphp
+                                {{ !empty($repairType) ? $repairType : '-' }}
+                            </td>
+                        </tr>
+                        <tr style="border: none;">
+                            <td style="font-weight: bold; border: none; padding: 1px 0; color: #4b5563;">Tim Teknisi:</td>
+                            <td style="border: none; padding: 1px 0;">
+                                @php
+                                    $team = $parsedReport['team'] ?? [];
+                                    $teamStr = is_array($team) ? implode(', ', $team) : (string)$team;
+                                @endphp
+                                {{ !empty($teamStr) ? $teamStr : '-' }}
+                            </td>
+                        </tr>
+                        <tr style="border: none;">
+                            <td style="font-weight: bold; border: none; padding: 1px 0; color: #4b5563;">Masalah Tersisa:</td>
+                            <td style="border: none; padding: 1px 0;">
+                                @php
+                                    $remIssues = $parsedReport['remaining_issues'] ?? '';
+                                @endphp
+                                {{ !empty($remIssues) ? $remIssues : '-' }}
+                            </td>
+                        </tr>
+                        <tr style="border: none;">
+                            <td style="font-weight: bold; border: none; padding: 1px 0; color: #4b5563;">Tindakan Lanjutan:</td>
+                            <td style="border: none; padding: 1px 0;">
+                                @php
+                                    $followUp = $parsedReport['follow_up'] ?? '';
+                                @endphp
+                                {{ !empty($followUp) ? $followUp : '-' }}
+                            </td>
+                        </tr>
+                        <tr style="border: none;">
+                            <td style="font-weight: bold; border: none; padding: 1px 0; color: #4b5563;">Catatan Verifikasi:</td>
+                            <td style="border: none; padding: 1px 0; font-style: italic;">
+                                @php
+                                    $userNotes = $parsedReport['user_notes'] ?? '';
+                                @endphp
+                                {{ !empty($userNotes) ? $userNotes : '-' }}
+                            </td>
+                        </tr>
+                    </table>
+                @else
+                    <div style="font-style: italic;">
+                        "{{ $corrective_actions }}"
+                    </div>
+                @endif
             </td>
         </tr>
     </table>
@@ -326,7 +399,7 @@
         <table style="border: 1px solid #86efac; background-color: #f0fdf4; margin-bottom: 4px;">
             <tr>
                 <td style="padding: 4px; text-align: center; color: #15803d; font-weight: bold; font-size: 7.5pt;">
-                    ✓ COMPLETED ON TIME
+                    COMPLETED ON TIME
                 </td>
             </tr>
         </table>

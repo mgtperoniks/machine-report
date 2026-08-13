@@ -388,23 +388,7 @@
 
     </div>
 
-    <!-- Scan-to-Service Footer Widget -->
-    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary-container text-on-primary p-8 rounded-xl items-center">
-        <div>
-            <h2 class="font-headline-md text-headline-md mb-2">Scan-to-Service</h2>
-            <p class="font-body-lg text-body-lg opacity-80 max-w-md">Gunakan aplikasi MRM Mobile untuk memindai QR Code mesin untuk mendapatkan diagnosis kondisi dan riwayat medis secara instan.</p>
-            <div class="mt-6 flex gap-4">
-                <button class="bg-surface-container-lowest text-primary px-6 py-2 rounded-lg font-bold">Unduh Aplikasi</button>
-                <button class="border border-white border-opacity-30 text-white px-6 py-2 rounded-lg font-bold">Panduan Operator</button>
-            </div>
-        </div>
-        <div class="flex justify-center md:justify-end">
-            <div class="bg-white p-4 rounded-xl shadow-lg border-4 border-primary text-center">
-                <img class="w-32 h-32 mx-auto" alt="A clean, minimalist high-contrast QR code centered on a white background with thin industrial blue border." src="{{ asset('images/qr-system-main-hub.png') }}"/>
-                <p class="text-primary-fixed mt-2 mono font-bold text-label-sm">ID: SYSTEM-MAIN-HUB</p>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Floating Action Button -->
     <div class="fixed bottom-8 right-8 z-50">

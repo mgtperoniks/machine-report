@@ -22,7 +22,8 @@ class SparepartItemDTO
         public readonly ?float $monthlyAverage = null,
         public readonly ?float $sixMonthAverage = null,
         public readonly ?string $trend = null,
-        public readonly ?int $leadTimeDays = null
+        public readonly ?int $leadTimeDays = null,
+        public readonly ?string $lastAuditAt = null
     ) {}
 
     /**
@@ -44,7 +45,8 @@ class SparepartItemDTO
         ?float $monthlyAverage = null,
         ?float $sixMonthAverage = null,
         ?string $trend = null,
-        ?int $leadTimeDays = null
+        ?int $leadTimeDays = null,
+        ?string $lastAuditAt = null
     ): self {
         return new self(
             erpCode: $erpCode,
@@ -64,14 +66,15 @@ class SparepartItemDTO
             monthlyAverage: $monthlyAverage,
             sixMonthAverage: $sixMonthAverage,
             trend: $trend,
-            leadTimeDays: $leadTimeDays
+            leadTimeDays: $leadTimeDays,
+            lastAuditAt: $lastAuditAt
         );
     }
 
     /**
      * Fallback DTO when WMS system is unreachable or item not found.
      */
-    public static function offlineFallback(string $erpCode, bool $isOffline = true, ?int $mappingId = null, ?int $leadTimeDays = null): self
+    public static function offlineFallback(string $erpCode, bool $isOffline = true, ?int $mappingId = null, ?int $leadTimeDays = null, ?string $lastAuditAt = null): self
     {
         return new self(
             erpCode: $erpCode,
@@ -91,7 +94,8 @@ class SparepartItemDTO
             monthlyAverage: null,
             sixMonthAverage: null,
             trend: null,
-            leadTimeDays: $leadTimeDays
+            leadTimeDays: $leadTimeDays,
+            lastAuditAt: $lastAuditAt
         );
     }
 
@@ -121,6 +125,7 @@ class SparepartItemDTO
             'six_month_average' => $this->sixMonthAverage,
             'trend' => $this->trend,
             'lead_time_days' => $this->leadTimeDays,
+            'last_audit_at' => $this->lastAuditAt,
         ];
     }
 }
