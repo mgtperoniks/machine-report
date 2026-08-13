@@ -181,10 +181,10 @@
             <td><span class="summary-value font-mono">{{ $case->created_at ? $case->created_at->format('d M Y H:i') : '-' }}</span></td>
         </tr>
         <tr>
-            <td class="bg-soft-blue"><span class="summary-label">Machine Code</span></td>
-            <td><span class="summary-value font-mono">{{ $case->machine->code ?? '-' }}</span></td>
+            <td class="bg-soft-blue"><span class="summary-label">Machine</span></td>
+            <td><span class="summary-value font-mono">{{ $case->machine ? ($case->machine->code . ' / ' . $case->machine->name) : '-' }}</span></td>
             <td class="bg-soft-blue"><span class="summary-label">Department</span></td>
-            <td><span class="summary-value">{{ $case->machine->department ?? '-' }}</span></td>
+            <td><span class="summary-value">{{ $case->machine ? ($case->machine->department . ' / ' . $case->machine->production_area) : '-' }}</span></td>
         </tr>
     </table>
 
@@ -280,31 +280,24 @@
         {{-- Images Grid (defensive tables layout) --}}
         @if(!empty($attachments['images']))
             @foreach (array_chunk($attachments['images'], 3) as $chunkRow => $chunk)
-                <table style="width: 100%; border-collapse: separate; border-spacing: 6px; border: none; margin-bottom: 4px;">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 4px; border: none; margin-bottom: 2px;">
                     <tr>
                         @foreach ($chunk as $idxInChunk => $imgPath)
-                            @php
-                                $photoIndex = ($chunkRow * 3) + $idxInChunk + 1;
-                            @endphp
-                            <td style="width: 31%; text-align: center; border: none; vertical-align: top; padding: 0;">
-                                <div style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 6px; border-radius: 4px; height: 200px; text-align: center; vertical-align: middle;">
-                                    <table style="width: 100%; height: 188px; border: none; margin: 0; padding: 0;">
+                            <td style="width: 32%; text-align: center; border: none; vertical-align: top; padding: 0;">
+                                <div style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 4px; border-radius: 4px; height: 120px; text-align: center; vertical-align: middle;">
+                                    <table style="width: 100%; height: 112px; border: none; margin: 0; padding: 0;">
                                         <tr>
-                                            <td style="text-align: center; vertical-align: middle; border: none; padding: 0; height: 188px;">
-                                                <img src="{{ $imgPath }}" style="max-width: 100%; max-height: 188px; vertical-align: middle;" />
+                                            <td style="text-align: center; vertical-align: middle; border: none; padding: 0; height: 112px;">
+                                                <img src="{{ $imgPath }}" style="max-width: 100%; max-height: 112px; vertical-align: middle; object-fit: contain;" />
                                             </td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div style="font-size: 7pt; font-weight: bold; margin-top: 4px; color: #4b5563; text-align: center;">
-                                    Photo {{ $photoIndex }}
-                                </div>
                             </td>
                         @endforeach
                         @for ($i = count($chunk); $i < 3; $i++)
-                            <td style="width: 31%; text-align: center; border: none; vertical-align: top; padding: 0;">
-                                <div style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 6px; border-radius: 4px; height: 200px;"></div>
-                                <div style="font-size: 7pt; font-weight: bold; margin-top: 4px; color: transparent; text-align: center;">&nbsp;</div>
+                            <td style="width: 32%; text-align: center; border: none; vertical-align: top; padding: 0;">
+                                <div style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 4px; border-radius: 4px; height: 120px;"></div>
                             </td>
                         @endfor
                     </tr>
@@ -345,29 +338,8 @@
         }
     @endphp
 
-    <!-- Section 4: Machine Information -->
-    <div class="section-header">4. Machine Information</div>
-    <table class="summary-table">
-        <tr>
-            <td class="bg-gray" style="width: 20%;"><span class="summary-label">Machine Name</span></td>
-            <td style="width: 30%;"><span class="summary-value">{{ $case->machine->name ?? '-' }}</span></td>
-            <td class="bg-gray" style="width: 20%;"><span class="summary-label">Machine Code</span></td>
-            <td style="width: 30%;"><span class="summary-value font-mono">{{ $case->machine->code ?? '-' }}</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">Department</span></td>
-            <td><span class="summary-value">{{ $case->machine->department ?? '-' }}</span></td>
-            <td class="bg-gray"><span class="summary-label">Production Area</span></td>
-            <td><span class="summary-value">{{ $case->machine->production_area ?? '-' }}</span></td>
-        </tr>
-        <tr>
-            <td class="bg-gray"><span class="summary-label">Machine Status</span></td>
-            <td colspan="3"><span class="summary-value font-mono">{{ strtoupper($case->machine->operational_status ?? '-') }}</span></td>
-        </tr>
-    </table>
-
-    <!-- Section 5: Digital Approval Signatures -->
-    <div class="section-header">5. Digital Authorization Signatures</div>
+    <!-- Section 4: Digital Approval Signatures -->
+    <div class="section-header">4. Digital Authorization Signatures</div>
     <table class="sig-table">
         <tr>
             {{-- Admin Maintenance Signature --}}
@@ -421,19 +393,26 @@
                             ]);
                             $directorQrCode = (new \chillerlan\QRCode\QRCode($qrOptions))->render($directorQrUrl);
                         @endphp
-                        <div style="margin: 4px auto; text-align: center;">
-                            <img src="{{ $directorQrCode }}" style="width: 55px; height: 55px; display: block; margin: 0 auto;" alt="Verify" />
-                            <div style="font-size: 5.5pt; font-weight: bold; color: #475569; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">SCAN TO VERIFY</div>
-                        </div>
-                        <div style="font-size: 7pt; font-weight: bold; color: #1f2937; margin-top: 4px;">{{ $approvals['director']['name'] }}</div>
-                        <div class="sig-meta">
-                            Status: <span style="font-weight: bold; color: #0f172a;">APPROVED</span><br/>
-                            Date: {{ $approvals['director']['date'] }}<br/>
-                            IP: {{ $approvals['director']['ip'] }}
-                            @if(isset($approvals['director']['note']))
-                                <br/><span style="font-style: italic; color: #475569;">"{{ $approvals['director']['note'] }}"</span>
-                            @endif
-                        </div>
+                        <table style="width: 100%; border: none; margin: 4px 0; padding: 0;">
+                            <tr style="border: none;">
+                                <td style="width: 40%; border: none; padding: 0; text-align: center; vertical-align: middle;">
+                                    <img src="{{ $directorQrCode }}" style="width: 48px; height: 48px; display: block; margin: 0 auto;" alt="Verify" />
+                                    <div style="font-size: 4.5pt; font-weight: bold; color: #475569; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.2px; text-align: center; line-height: 1.1;">SCAN TO VERIFY</div>
+                                </td>
+                                <td style="width: 60%; border: none; padding-left: 6px; text-align: left; vertical-align: top;">
+                                    <div style="font-size: 7.5pt; font-weight: bold; color: #1f2937;">Direktur</div>
+                                    <div style="font-size: 6.5pt; font-weight: bold; color: #475569;">{{ $approvals['director']['name'] }}</div>
+                                    <div class="sig-meta" style="margin-top: 2px;">
+                                        Status: <span style="font-weight: bold; color: #0f172a;">APPROVED</span><br/>
+                                        Date: {{ $approvals['director']['date'] }}<br/>
+                                        IP: {{ $approvals['director']['ip'] }}
+                                        @if(isset($approvals['director']['note']))
+                                            <br/><span style="font-style: italic; color: #475569;">"{{ $approvals['director']['note'] }}"</span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     @else
                         <div class="sig-stamp stamp-rejected">REJECTED</div>
                         <div style="font-size: 7pt; font-weight: bold; color: #1f2937;">{{ $approvals['director']['name'] }}</div>
